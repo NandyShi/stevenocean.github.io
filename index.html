@@ -48,9 +48,9 @@
       </nav>
       <nav id="sub-nav">
         
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS"></a>
         
-        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Buscar"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
@@ -75,7 +75,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/15/hello-world/">Hello World</a>
+      <a class="article-title" href="/2018/03/15/hello-world/">firewall-cmd 常用命令使用</a>
     </h1>
   
 
@@ -83,20 +83,29 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+        <p>简要记录一下 firewall-cmd 常用命令的使用。</p>
+<h3 id="启用端口"><a href="#启用端口" class="headerlink" title="启用端口"></a>启用端口</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ firewall-cmd [--zone=&lt;zone&gt;] --add-port=&lt;port&gt;[-&lt;port&gt;]/&lt;protocol&gt; [--timeout=&lt;seconds&gt;]</span><br></pre></td></tr></table></figure>
+<p>如下示例为添加 tcp 18080 端口:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ firewall-cmd --add-port=18080/tcp</span><br></pre></td></tr></table></figure>
+<h3 id="禁用端口"><a href="#禁用端口" class="headerlink" title="禁用端口"></a>禁用端口</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ firewall-cmd [--zone=&lt;zone&gt;] --remove-port=&lt;port&gt;[-&lt;port&gt;]/&lt;protocol&gt;</span><br></pre></td></tr></table></figure>
+<p>如下示例为禁用指定的 tcp 18080 端口:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ firewall-cmd --remove-port=18080/tcp</span><br></pre></td></tr></table></figure>
+<h3 id="启用服务"><a href="#启用服务" class="headerlink" title="启用服务"></a>启用服务</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ firewall-cmd [--zone=&lt;zone&gt;] --add-service=&lt;service&gt; [--timeout=&lt;seconds&gt;]</span><br></pre></td></tr></table></figure>
+<p>如下为启用 http 服务:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ firewall-cmd --add-service=http</span><br></pre></td></tr></table></figure>
+<h3 id="禁用服务"><a href="#禁用服务" class="headerlink" title="禁用服务"></a>禁用服务</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ firewall-cmd [--zone=&lt;zone&gt;] --remove-service=&lt;service&gt;</span><br></pre></td></tr></table></figure>
+<p>如下为禁用 http 服务:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ firewall-cmd --zone=home --remove-service=http</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注：上面的配置都为临时配置，在重启之后均会失效，如果需要永久配置，则添加选项参数 –permanent。</p>
+</blockquote>
+<h3 id="查看当前防火墙运行状态"><a href="#查看当前防火墙运行状态" class="headerlink" title="查看当前防火墙运行状态"></a>查看当前防火墙运行状态</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ firewall-cmd --state</span><br><span class="line">running       == 正在运行</span><br><span class="line">     </span><br><span class="line">$ firewall-cmd --state</span><br><span class="line">not running   == 防火墙已关闭</span><br></pre></td></tr></table></figure>
+<h3 id="查看当前防火墙的配置"><a href="#查看当前防火墙的配置" class="headerlink" title="查看当前防火墙的配置"></a>查看当前防火墙的配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ firewall-cmd --list-all</span><br><span class="line">public (default, active)</span><br><span class="line">  interfaces: eth0 eth1</span><br><span class="line">  sources: </span><br><span class="line">  services: dhcpv6-client ssh</span><br><span class="line">  ports: 5100/tcp 18080/tcp 8080/tcp</span><br><span class="line">  masquerade: no</span><br><span class="line">  forward-ports: </span><br><span class="line">  icmp-blocks: </span><br><span class="line">  rich rules:</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/15/hello-world/" data-id="cjesfukn6000024xqrunbl0dj" class="article-share-link">Teilen</a>
+      <a data-url="http://yoursite.com/2018/03/15/hello-world/" data-id="cjesfukn6000024xqrunbl0dj" class="article-share-link">Compartir</a>
       
       
     </footer>
@@ -122,7 +131,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archiv</h3>
+    <h3 class="widget-title">Archivos</h3>
     <div class="widget">
       <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li></ul>
     </div>
@@ -132,12 +141,12 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">letzter Beitrag</h3>
+    <h3 class="widget-title">Posts recientes</h3>
     <div class="widget">
       <ul>
         
           <li>
-            <a href="/2018/03/15/hello-world/">Hello World</a>
+            <a href="/2018/03/15/hello-world/">firewall-cmd 常用命令使用</a>
           </li>
         
       </ul>
@@ -153,7 +162,7 @@
   <div class="outer">
     <div id="footer-info" class="inner">
       &copy; 2018 John Doe<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      Construido por <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>
