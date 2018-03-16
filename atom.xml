@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Steven`s Blog</title>
+  
+  
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://stevenocean.github.io/"/>
+  <updated>2018-03-15T12:07:02.494Z</updated>
+  <id>http://stevenocean.github.io/</id>
+  
+  <author>
+    <name>Steven</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>firewall-cmd 常用命令使用</title>
+    <link href="http://stevenocean.github.io/2018/03/15/firewall-cmd-common-use.html"/>
+    <id>http://stevenocean.github.io/2018/03/15/firewall-cmd-common-use.html</id>
+    <published>2018-03-15T10:33:52.310Z</published>
+    <updated>2018-03-15T12:07:02.494Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;简要记录一下 firewall-cmd 常用命令的使用。&lt;/p&gt;
+&lt;h3 id=&quot;启用端口&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;#启用端口&quot;&gt;&lt;/a&gt;启用端口&lt;/h3&gt;
+&lt;figure class=&quot;highlight
+        
+      
+    
+    </summary>
+    
+    
+  </entry>
+  
+</feed>
