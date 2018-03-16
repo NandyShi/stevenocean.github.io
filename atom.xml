@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://stevenocean.github.io/"/>
-  <updated>2018-03-16T14:35:54.262Z</updated>
+  <updated>2018-03-16T14:39:18.046Z</updated>
   <id>http://stevenocean.github.io/</id>
   
   <author>
@@ -17,28 +17,26 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>swift中使用reduce函数的一个小示例</title>
+    <title>Swift中使用reduce函数的一个小示例</title>
     <link href="http://stevenocean.github.io/2018/03/16/swift-reduce-example.html"/>
     <id>http://stevenocean.github.io/2018/03/16/swift-reduce-example.html</id>
     <published>2018-03-16T14:12:00.000Z</published>
-    <updated>2018-03-16T14:35:54.262Z</updated>
+    <updated>2018-03-16T14:39:18.046Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;p&gt;今天看到一篇通过一个比较有意思的示例来讲解 reduce 函数使用的文章 &lt;a href=&quot;http://appventure.me/2015/11/30/reduce-all-the-things/&quot; target=&quot;_blank&quot;
-        
-      
+      &lt;p&gt;今天看到一篇通过一个比较有意思的示例来讲解 reduce 函数使用的文章 &lt;a href=&quot;http://appventure.me/2015/11/30/reduce-all-the-things/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;reduce all the things&lt;/a&gt;，自己也依葫芦画瓢的在 Swift 4.0 下实现了一遍 :)&lt;/p&gt;
+&lt;p&gt;示例大致是这样的:&lt;/p&gt;
+&lt;p&gt;如下为美国各个城市的 persons 列表，其中每个 person 的结构包括姓名、所属城市（其中城市名字符串的逗号之后为州名，如 CA 为加利福尼亚州）、平均年龄。请使用 map/flatmap/filter/reduce 等函数来封装一个查询指定州的总人数和平均年龄，其中函数输入参数为州名，persons 列表。&lt;/p&gt;
+&lt;figure class=&quot;highlight swift&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;let&lt;/span&gt; persons: [[&lt;span class=&quot;type&quot;&gt;String&lt;/span&gt;: &lt;span class=&quot;type&quot;&gt;Any&lt;/span&gt;]] = [&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [&lt;span class=&quot;string&quot;&gt;&quot;name&quot;&lt;/span&gt;: &lt;span class=&quot;string&quot;&gt;&quot;Carl Saxon&quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&quot;city&quot;&lt;/span&gt;: &lt;span class=&quot;string&quot;&gt;&quot;New York, NY&quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&quot;age&quot;&lt;/span&gt;: &lt;span class=&quot;number&quot;&gt;44&lt;/span&gt;],&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [&lt;span class=&quot;string&quot;&gt;&quot;name&quot;&lt;/span&gt;: &lt;span class=&quot;string&quot;&gt;&quot;Travis Downing&quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&quot;city&quot;&lt;/span&gt;: &lt;span class=&quot;string&quot;&gt;&quot;El Segundo, CA&quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&quot;age&quot;&lt;/span&gt;: &lt;span class=&quot;number&quot;&gt;34&lt;/span&gt;],&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [&lt;span class=&quot;string&quot;&gt;&quot;name&quot;&lt;/span&gt;: &lt;span class=&quot;string&quot;&gt;&quot;Liz Parker&quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&quot;city&quot;&lt;/span&gt;: &lt;span class=&quot;string&quot;&gt;&quot;San Francisco, CA&quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&quot;age&quot;&lt;/span&gt;: &lt;span class=&quot;number&quot;&gt;32&lt;/span&gt;],&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [&lt;span class=&quot;string&quot;&gt;&quot;name&quot;&lt;/span&gt;: &lt;span class=&quot;string&quot;&gt;&quot;John Newden&quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&quot;city&quot;&lt;/span&gt;: &lt;span class=&quot;string&quot;&gt;&quot;New Jersey, NY&quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&quot;age&quot;&lt;/span&gt;: &lt;span class=&quot;number&quot;&gt;21&lt;/span&gt;],&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [&lt;span class=&quot;string&quot;&gt;&quot;name&quot;&lt;/span&gt;: &lt;span class=&quot;string&quot;&gt;&quot;Hector Simons&quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&quot;city&quot;&lt;/span&gt;: &lt;span class=&quot;string&quot;&gt;&quot;San Diego, CA&quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&quot;age&quot;&lt;/span&gt;: &lt;span class=&quot;number&quot;&gt;37&lt;/span&gt;],&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [&lt;span class=&quot;string&quot;&gt;&quot;name&quot;&lt;/span&gt;: &lt;span class=&quot;string&quot;&gt;&quot;Hector Simons&quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&quot;city&quot;&lt;/span&gt;: &lt;span class=&quot;string&quot;&gt;&quot;Douglas County, CO&quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&quot;age&quot;&lt;/span&gt;: &lt;span class=&quot;number&quot;&gt;39&lt;/span&gt;],&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [&lt;span class=&quot;string&quot;&gt;&quot;name&quot;&lt;/span&gt;: &lt;span class=&quot;string&quot;&gt;&quot;Brian Neo&quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&quot;age&quot;&lt;/span&gt;: &lt;span class=&quot;number&quot;&gt;27&lt;/span&gt;],&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;]&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;这个示例如果是用 map/flatmap/filter 等函数组合起来也是可以实现的，只是比较啰嗦不够优雅，而且在这个 &lt;strong&gt;persons&lt;/strong&gt; 量级上升后，性能也会不那么乐观（主要涉及到对整个 &lt;strong&gt;persons&lt;/strong&gt; 的遍历次数，使用 &lt;strong&gt;reduce&lt;/strong&gt; 只需要对 &lt;strong&gt;persons&lt;/strong&gt; 遍历一次，具体可以参考那篇文章）。&lt;/p&gt;
     
     </summary>
     
       <category term="Swift" scheme="http://stevenocean.github.io/categories/Swift/"/>
     
     
-      <category term="swift" scheme="http://stevenocean.github.io/tags/swift/"/>
+      <category term="Swift" scheme="http://stevenocean.github.io/tags/Swift/"/>
     
       <category term="reduce" scheme="http://stevenocean.github.io/tags/reduce/"/>
     
