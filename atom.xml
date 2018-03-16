@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://stevenocean.github.io/"/>
-  <updated>2018-03-16T03:45:48.013Z</updated>
+  <updated>2018-03-16T14:35:54.262Z</updated>
   <id>http://stevenocean.github.io/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>swift中使用reduce函数的一个小示例</title>
+    <link href="http://stevenocean.github.io/2018/03/16/swift-reduce-example.html"/>
+    <id>http://stevenocean.github.io/2018/03/16/swift-reduce-example.html</id>
+    <published>2018-03-16T14:12:00.000Z</published>
+    <updated>2018-03-16T14:35:54.262Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;今天看到一篇通过一个比较有意思的示例来讲解 reduce 函数使用的文章 &lt;a href=&quot;http://appventure.me/2015/11/30/reduce-all-the-things/&quot; target=&quot;_blank&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="Swift" scheme="http://stevenocean.github.io/categories/Swift/"/>
+    
+    
+      <category term="swift" scheme="http://stevenocean.github.io/tags/swift/"/>
+    
+      <category term="reduce" scheme="http://stevenocean.github.io/tags/reduce/"/>
+    
+  </entry>
   
   <entry>
     <title>firewall-cmd 常用命令使用</title>
