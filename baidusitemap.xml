@@ -3,21 +3,28 @@
 
 
     
-    
   <url>
     <loc>http://stevenocean.github.io/2018/03/15/firewall-cmd-common-use.html</loc>
-    <lastmod>2018-03-15T12:07:02.494Z</lastmod>
+    <lastmod>2018-03-16T02:43:59.415Z</lastmod>
     <data>
         <display>
         <title>firewall-cmd 常用命令使用</title>
-        <pubTime>2018-03-15T10:33:52.310Z</pubTime>
+        <pubTime>2018-03-15T10:33:00.000Z</pubTime>
         
+        <tag>firewall</tag>
+         
+        <tag>firewall-cmd</tag>
+         
          
            
+             
+              <breadCrumb title="Linux" url="http://stevenocean.github.io/categories/Linux/"/>
+          
         </display>
     </data>
     </url>
 
+    
     
     
     
