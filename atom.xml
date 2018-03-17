@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://stevenocean.github.io/"/>
-  <updated>2018-03-16T15:00:51.063Z</updated>
+  <updated>2018-03-17T09:05:09.426Z</updated>
   <id>http://stevenocean.github.io/</id>
   
   <author>
@@ -17,11 +17,49 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>go-ethereum 源码分析 - 区块结构(1)</title>
+    <link href="http://stevenocean.github.io/2018/03/17/go-ethereum-source-analysize-1.html"/>
+    <id>http://stevenocean.github.io/2018/03/17/go-ethereum-source-analysize-1.html</id>
+    <published>2018-03-17T08:58:00.000Z</published>
+    <updated>2018-03-17T09:05:09.426Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;今天抽时间浏览了 Ethereum 的区块结构的相关源码，更加深入地了解区块的数据结构。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;分析的主要是 go-ethereum 项目的源码。版本取的是 Frost(v1.8.2)。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;figure class=&quot;highlight shell&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;32&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;33&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;34&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;35&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;36&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;37&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;38&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;39&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;40&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;41&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;42&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;43&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;44&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;45&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;46&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;47&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;48&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;49&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;➜  go-ethereum git:(master)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;.&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── accounts        // 以太坊的钱包和账户管理&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    ├── abi         // 以太坊合约的ABI代码&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    ├── keystore    // 支持 keystore 模式的钱包&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    └── usbwallet   // 支持 USB 模式的钱包&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── bmt             // 二进制的 Merkle 树的实现&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── build           // 编译与构建的一些脚本和配置&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── cmd             // 命令行工具集&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    ├── abigen      // ABI 生成器&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    ├── bootnode    // 启动一个仅仅实现网络发现的节点&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    ├── ethkey&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    ├── evm         // 以太坊虚拟机的开发工具&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    ├── faucet&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    ├── geth        // geth 命令行工具&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    ├── p2psim      // 提供了一个工具来模拟 HTTP 的 API&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    ├── puppeth     // 创建一个新的以太坊网络的向导&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    ├── rlpdump     // RLP 数据的格式化输出&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    ├── swarm       // swarm 网络的接入点&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    ├── utils       // 公共工具&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    └── wnode       // 一个简单的 whisper 节点&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── common          // 提供了一些公共通用的工具类&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── compression     // 压缩&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── consensus       // 提供了以太坊的一些共识算法，比如：ethhash&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── console         // 控制台&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── containers      // 支持 docker 和 vagrant 等容器&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── contracts       // 合约管理&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── core            // 核心数据结构和算法（EVM，Block，布隆过滤器德国）&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── crypto          // 加密相关&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── dashboard       // &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── eth             // 在其中实现了以太坊的协议&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── ethclient       // geth 客户端入口&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── ethdb           // 数据库（leveldb）&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── ethstats        // 提供以太坊网络状态的报告&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── event           // 用于处理实时事件&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── les             // 以太坊的轻量级协议子集&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── light           // 实现为以太坊轻量级客户端提供按需检索的功能&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── log             // 日志模块&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── metrics         // 度量和检测&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── miner           // 提供以太坊的区块创建和挖矿&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── mobile          // 移动端的一些 wrapper&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── node            // 以太坊的多种类型的节点&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── p2p             // P2P 网络&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── params          // 参数管理&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── rlp             // 以太坊的序列化处理（rlp 递归长度前缀编码）&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── rpc             // rpc&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── swarm           // P2P 网络存储&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── trie            // 以太坊中的重要数据结构，Merkle Patricia Tries&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;└── whisper         // whisper 节点协议&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;h2 id=&quot;block-区块结构&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;#block-区块结构&quot;&gt;&lt;/a&gt;Block 区块结构&lt;/h2&gt;
+&lt;p&gt;在区块链上的每个区块主要包括区块头（Header）和区块体（Body）两部分。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="Ethereum" scheme="http://stevenocean.github.io/categories/Ethereum/"/>
+    
+      <category term="以太坊" scheme="http://stevenocean.github.io/categories/Ethereum/%E4%BB%A5%E5%A4%AA%E5%9D%8A/"/>
+    
+      <category term="区块链" scheme="http://stevenocean.github.io/categories/Ethereum/%E4%BB%A5%E5%A4%AA%E5%9D%8A/%E5%8C%BA%E5%9D%97%E9%93%BE/"/>
+    
+      <category term="blockchain" scheme="http://stevenocean.github.io/categories/Ethereum/%E4%BB%A5%E5%A4%AA%E5%9D%8A/%E5%8C%BA%E5%9D%97%E9%93%BE/blockchain/"/>
+    
+    
+      <category term="Ethereum" scheme="http://stevenocean.github.io/tags/Ethereum/"/>
+    
+      <category term="以太坊" scheme="http://stevenocean.github.io/tags/%E4%BB%A5%E5%A4%AA%E5%9D%8A/"/>
+    
+      <category term="区块链" scheme="http://stevenocean.github.io/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/"/>
+    
+      <category term="blockchain" scheme="http://stevenocean.github.io/tags/blockchain/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Swift中使用reduce函数的一个小示例</title>
     <link href="http://stevenocean.github.io/2018/03/16/swift-reduce-example.html"/>
     <id>http://stevenocean.github.io/2018/03/16/swift-reduce-example.html</id>
     <published>2018-03-16T14:12:00.000Z</published>
-    <updated>2018-03-16T15:00:51.063Z</updated>
+    <updated>2018-03-17T08:56:27.647Z</updated>
     
     <summary type="html">
     
