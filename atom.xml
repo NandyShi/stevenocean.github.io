@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://stevenocean.github.io/"/>
-  <updated>2018-03-18T14:06:34.176Z</updated>
+  <updated>2018-03-19T12:09:03.898Z</updated>
   <id>http://stevenocean.github.io/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="http://stevenocean.github.io/2018/03/17/go-ethereum-source-analysize-1.html"/>
     <id>http://stevenocean.github.io/2018/03/17/go-ethereum-source-analysize-1.html</id>
     <published>2018-03-17T15:58:00.000Z</published>
-    <updated>2018-03-18T14:06:34.176Z</updated>
+    <updated>2018-03-19T12:09:03.898Z</updated>
     
     <summary type="html">
     
@@ -29,8 +29,8 @@
 &lt;blockquote&gt;
 &lt;p&gt;分析的主要是 go-ethereum 项目的源码。版本取的是 Frost(v1.8.2)。&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;h2 id=&quot;以太坊的基本结构&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;#以太坊的基本结构&quot;&gt;&lt;/a&gt;以太坊的基本结构&lt;/h2&gt;
-&lt;p&gt;先大致了解了以太坊的基本，如下图（来自网络）:&lt;/p&gt;
+&lt;h2 id=&quot;1-以太坊的基本结构&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;#1-以太坊的基本结构&quot;&gt;&lt;/a&gt;1. 以太坊的基本结构&lt;/h2&gt;
+&lt;p&gt;先大致了解了以太坊的基本结构，如下图（来自网络）:&lt;/p&gt;
 &lt;img src=&quot;/2018/03/17/go-ethereum-source-analysize-1/ethereum-overall-arch-1.jpg&quot;&gt;
 &lt;p&gt;其中除了区块链管理（Blockchain Management）和挖矿模块（Miner）之外还包含了：&lt;/p&gt;
 &lt;ul&gt;
