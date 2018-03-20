@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://stevenocean.github.io/"/>
-  <updated>2018-03-19T12:09:03.898Z</updated>
+  <updated>2018-03-20T06:57:36.041Z</updated>
   <id>http://stevenocean.github.io/</id>
   
   <author>
@@ -17,11 +17,55 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>以太坊中的各种术语解释(持续更新)</title>
+    <link href="http://stevenocean.github.io/2018/03/19/ethereum-terms.html"/>
+    <id>http://stevenocean.github.io/2018/03/19/ethereum-terms.html</id>
+    <published>2018-03-19T06:58:00.000Z</published>
+    <updated>2018-03-20T06:57:36.041Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;EVM&lt;/strong&gt;：Ethereum Virtual
+        
+      
+    
+    </summary>
+    
+      <category term="Ethereum(以太坊)" scheme="http://stevenocean.github.io/categories/Ethereum-%E4%BB%A5%E5%A4%AA%E5%9D%8A/"/>
+    
+      <category term="blockchain(区块链)" scheme="http://stevenocean.github.io/categories/Ethereum-%E4%BB%A5%E5%A4%AA%E5%9D%8A/blockchain-%E5%8C%BA%E5%9D%97%E9%93%BE/"/>
+    
+    
+      <category term="Ethereum" scheme="http://stevenocean.github.io/tags/Ethereum/"/>
+    
+      <category term="以太坊" scheme="http://stevenocean.github.io/tags/%E4%BB%A5%E5%A4%AA%E5%9D%8A/"/>
+    
+      <category term="区块链" scheme="http://stevenocean.github.io/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/"/>
+    
+      <category term="blockchain" scheme="http://stevenocean.github.io/tags/blockchain/"/>
+    
+      <category term="账户" scheme="http://stevenocean.github.io/tags/%E8%B4%A6%E6%88%B7/"/>
+    
+      <category term="合约账户" scheme="http://stevenocean.github.io/tags/%E5%90%88%E7%BA%A6%E8%B4%A6%E6%88%B7/"/>
+    
+      <category term="Account" scheme="http://stevenocean.github.io/tags/Account/"/>
+    
+      <category term="Constract Account" scheme="http://stevenocean.github.io/tags/Constract-Account/"/>
+    
+  </entry>
+  
+  <entry>
     <title>go-ethereum 源码分析 - 区块结构(1)</title>
     <link href="http://stevenocean.github.io/2018/03/17/go-ethereum-source-analysize-1.html"/>
     <id>http://stevenocean.github.io/2018/03/17/go-ethereum-source-analysize-1.html</id>
     <published>2018-03-17T15:58:00.000Z</published>
-    <updated>2018-03-19T12:09:03.898Z</updated>
+    <updated>2018-03-20T02:41:35.452Z</updated>
     
     <summary type="html">
     
