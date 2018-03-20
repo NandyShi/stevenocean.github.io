@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://stevenocean.github.io/"/>
-  <updated>2018-03-20T06:57:36.041Z</updated>
+  <updated>2018-03-20T07:00:29.253Z</updated>
   <id>http://stevenocean.github.io/</id>
   
   <author>
@@ -21,19 +21,33 @@
     <link href="http://stevenocean.github.io/2018/03/19/ethereum-terms.html"/>
     <id>http://stevenocean.github.io/2018/03/19/ethereum-terms.html</id>
     <published>2018-03-19T06:58:00.000Z</published>
-    <updated>2018-03-20T06:57:36.041Z</updated>
+    <updated>2018-03-20T07:00:29.253Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;ul&gt;
+      &lt;ul&gt;
 &lt;li&gt;
-&lt;p&gt;&lt;strong&gt;EVM&lt;/strong&gt;：Ethereum Virtual
-        
-      
+&lt;p&gt;&lt;strong&gt;EVM&lt;/strong&gt;：Ethereum Virtual Machine，以太坊虚拟机，这是一个隔离的轻量级的VM，运行在其中的智能合约代码无法访问本地网络、文件系统和其他进程；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;EOA&lt;/strong&gt;: External Owned Accounts，以太坊&lt;strong&gt;外部账号&lt;/strong&gt;，通过与其关联的私钥（private key）来发送 ether 和 消息；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Contracts Accounts&lt;/strong&gt;：&lt;strong&gt;合约账户&lt;/strong&gt;，存储可在 &lt;strong&gt;EVM&lt;/strong&gt; 中执行的&lt;strong&gt;智能合约&lt;/strong&gt;代码，只能被 &lt;strong&gt;EOA&lt;/strong&gt; 来调用激活，当&lt;strong&gt;合约账户&lt;/strong&gt;被调用时，存储其中的&lt;strong&gt;智能合约&lt;/strong&gt;会在矿工处的&lt;strong&gt;EVM&lt;/strong&gt;中自动执行，并消耗一定的 &lt;strong&gt;Gas&lt;/strong&gt;，&lt;strong&gt;Gas&lt;/strong&gt; 通过 &lt;strong&gt;EOA&lt;/strong&gt; 中的以太币进行购买；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Transaction&lt;/strong&gt;: 以太坊中的&lt;strong&gt;交易&lt;/strong&gt;是指从 &lt;strong&gt;EOA&lt;/strong&gt; 发送给另一个账户的消息的签过名的数据包，一笔交易主要包括：接收方、发送方、gasLimit、gasPrice、Value(交易金额)等等；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Message&lt;/strong&gt;：&lt;strong&gt;消息&lt;/strong&gt;是一个不能序列化的，并且只存在于以太坊运行环境中的虚拟对象，一条消息主要包括：消息的发送方、接收方、gasLimit等等；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Smart Contract&lt;/strong&gt;: &lt;strong&gt;智能合约&lt;/strong&gt;，是以太坊中最重要的一个概念，以太坊支持通过图灵完备的高级语言，如：Solidity、Serpent等来开发智能合约，其可以接受来自外部的交易请求和事件来触发合约代码逻辑，进一步生成新的交易和事件，甚至进一步调用其他的智能合约；&lt;a href=&quot;https://en.wikipedia.org/wiki/Smart_contract&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Smart Contract Wiki&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Gas&lt;/strong&gt;：&lt;strong&gt;燃料&lt;/strong&gt;，没执行一条合约指令就会消耗一定的燃料（Gas），当某个交易还未执行结束，而 &lt;strong&gt;Gas&lt;/strong&gt; 已经消耗完时，则合约执行终止并回滚状态；&lt;strong&gt;Gas&lt;/strong&gt; 可以和 ether 进行兑换，但是有个注意点就是，ether 的价格是波动的，但运行某段智能合约的费用可以是固定的，可以通过设定 &lt;strong&gt;Gas Price&lt;/strong&gt; 等来进行调节；&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
     
     </summary>
     
