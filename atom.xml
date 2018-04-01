@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://stevenocean.github.io/"/>
-  <updated>2018-04-01T10:37:13.615Z</updated>
+  <updated>2018-04-01T10:48:48.067Z</updated>
   <id>http://stevenocean.github.io/</id>
   
   <author>
@@ -21,19 +21,27 @@
     <link href="http://stevenocean.github.io/2018/03/31/go-ethereum-source-analysis-3.html"/>
     <id>http://stevenocean.github.io/2018/03/31/go-ethereum-source-analysis-3.html</id>
     <published>2018-03-31T14:58:00.000Z</published>
-    <updated>2018-04-01T10:37:13.615Z</updated>
+    <updated>2018-04-01T10:48:48.067Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;p&gt;go-ethereum 中的所有区块数据都存储在 &lt;strong&gt;leveldb&lt;/strong&gt; 中，并且 go-ethereum 又基于 leveldb 进行了一层简单的封装。&lt;/p&gt;
+      &lt;p&gt;go-ethereum 中的所有区块数据都存储在 &lt;strong&gt;leveldb&lt;/strong&gt; 中，并且 go-ethereum 又基于 leveldb 进行了一层简单的封装。&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;&lt;a
-        
-      
+&lt;p&gt;&lt;a href=&quot;https://zh.wikipedia.org/wiki/LevelDB&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;&lt;strong&gt;leveldb&lt;/strong&gt;&lt;/a&gt; 是一个由 Google 开源（BSD）的 KV（Key/Value Pair）非关系型数据库，是基于 &lt;a href=&quot;http://www.benstopford.com/2015/02/14/log-structured-merge-trees/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;&lt;strong&gt;LSM(Log-Structured-Merge tree)&lt;/strong&gt;&lt;/a&gt; 的典型实现。&lt;/p&gt;
+&lt;p&gt;主要有如下几个&lt;a href=&quot;https://github.com/google/leveldb&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;特性&lt;/a&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Keys 和 Values 均为任意长度的字节数组；&lt;/li&gt;
+&lt;li&gt;Data(KV) 默认以 Key 字典序排序存储，也可以提供自定义的排序算法来重载排序；&lt;/li&gt;
+&lt;li&gt;基本操作包括：Put(k,v)，Get(k)，Delete(k)；&lt;/li&gt;
+&lt;li&gt;支持原子级的批量(Batch)操作；&lt;/li&gt;
+&lt;li&gt;可以创建数据全景(transient)的 snapshot，并支持在 snapshot 中查找数据；&lt;/li&gt;
+&lt;li&gt;支持前向和后向迭代遍历数据；&lt;/li&gt;
+&lt;li&gt;数据自动采用 &lt;a href=&quot;http://google.github.io/snappy/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;&lt;strong&gt;Snappy&lt;/strong&gt;&lt;/a&gt; 压缩算法进行压缩；&lt;/li&gt;
+&lt;li&gt;可移植性；&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;源码目录如下，主要就下面 4 个源码文件：&lt;/p&gt;
+&lt;figure class=&quot;highlight shell&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;➜  ethdb :&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;.&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── database.go        // leveldb 的封装代码&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── database_test.go   // 测试用例&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;├── interface.go       // 定义了 Database 的一些操作接口&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;└── memory_database.go // 供测试环境使用的基于内存的数据库&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
     
     </summary>
     
