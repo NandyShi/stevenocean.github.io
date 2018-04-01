@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://stevenocean.github.io/"/>
-  <updated>2018-03-20T07:00:29.253Z</updated>
+  <updated>2018-04-01T10:37:13.615Z</updated>
   <id>http://stevenocean.github.io/</id>
   
   <author>
@@ -17,11 +17,49 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>go-ethereum 源码分析 - ethdb(3)</title>
+    <link href="http://stevenocean.github.io/2018/03/31/go-ethereum-source-analysis-3.html"/>
+    <id>http://stevenocean.github.io/2018/03/31/go-ethereum-source-analysis-3.html</id>
+    <published>2018-03-31T14:58:00.000Z</published>
+    <updated>2018-04-01T10:37:13.615Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;go-ethereum 中的所有区块数据都存储在 &lt;strong&gt;leveldb&lt;/strong&gt; 中，并且 go-ethereum 又基于 leveldb 进行了一层简单的封装。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a
+        
+      
+    
+    </summary>
+    
+      <category term="Ethereum(以太坊)" scheme="http://stevenocean.github.io/categories/Ethereum-%E4%BB%A5%E5%A4%AA%E5%9D%8A/"/>
+    
+      <category term="blockchain(区块链)" scheme="http://stevenocean.github.io/categories/Ethereum-%E4%BB%A5%E5%A4%AA%E5%9D%8A/blockchain-%E5%8C%BA%E5%9D%97%E9%93%BE/"/>
+    
+    
+      <category term="Ethereum" scheme="http://stevenocean.github.io/tags/Ethereum/"/>
+    
+      <category term="以太坊" scheme="http://stevenocean.github.io/tags/%E4%BB%A5%E5%A4%AA%E5%9D%8A/"/>
+    
+      <category term="区块链" scheme="http://stevenocean.github.io/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/"/>
+    
+      <category term="blockchain" scheme="http://stevenocean.github.io/tags/blockchain/"/>
+    
+      <category term="LevelDB" scheme="http://stevenocean.github.io/tags/LevelDB/"/>
+    
+  </entry>
+  
+  <entry>
     <title>以太坊中的各种术语解释(持续更新)</title>
     <link href="http://stevenocean.github.io/2018/03/19/ethereum-terms.html"/>
     <id>http://stevenocean.github.io/2018/03/19/ethereum-terms.html</id>
     <published>2018-03-19T06:58:00.000Z</published>
-    <updated>2018-03-20T07:00:29.253Z</updated>
+    <updated>2018-03-23T16:10:23.242Z</updated>
     
     <summary type="html">
     
@@ -43,9 +81,6 @@
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;&lt;strong&gt;Smart Contract&lt;/strong&gt;: &lt;strong&gt;智能合约&lt;/strong&gt;，是以太坊中最重要的一个概念，以太坊支持通过图灵完备的高级语言，如：Solidity、Serpent等来开发智能合约，其可以接受来自外部的交易请求和事件来触发合约代码逻辑，进一步生成新的交易和事件，甚至进一步调用其他的智能合约；&lt;a href=&quot;https://en.wikipedia.org/wiki/Smart_contract&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Smart Contract Wiki&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Gas&lt;/strong&gt;：&lt;strong&gt;燃料&lt;/strong&gt;，没执行一条合约指令就会消耗一定的燃料（Gas），当某个交易还未执行结束，而 &lt;strong&gt;Gas&lt;/strong&gt; 已经消耗完时，则合约执行终止并回滚状态；&lt;strong&gt;Gas&lt;/strong&gt; 可以和 ether 进行兑换，但是有个注意点就是，ether 的价格是波动的，但运行某段智能合约的费用可以是固定的，可以通过设定 &lt;strong&gt;Gas Price&lt;/strong&gt; 等来进行调节；&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
     
@@ -79,7 +114,7 @@
     <link href="http://stevenocean.github.io/2018/03/17/go-ethereum-source-analysize-1.html"/>
     <id>http://stevenocean.github.io/2018/03/17/go-ethereum-source-analysize-1.html</id>
     <published>2018-03-17T15:58:00.000Z</published>
-    <updated>2018-03-20T02:41:35.452Z</updated>
+    <updated>2018-03-31T13:47:23.347Z</updated>
     
     <summary type="html">
     
