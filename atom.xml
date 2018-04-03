@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://stevenocean.github.io/"/>
-  <updated>2018-04-01T10:48:48.067Z</updated>
+  <updated>2018-04-03T09:48:39.013Z</updated>
   <id>http://stevenocean.github.io/</id>
   
   <author>
@@ -15,6 +15,42 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>以太坊账户管理之 keystore 文件(科普)</title>
+    <link href="http://stevenocean.github.io/2018/04/02/about-ethereum-keystore.html"/>
+    <id>http://stevenocean.github.io/2018/04/02/about-ethereum-keystore.html</id>
+    <published>2018-04-02T15:58:00.000Z</published>
+    <updated>2018-04-03T09:48:39.013Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;1-什么是-keystore-文件&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;#1-什么是-keystore-文件&quot;&gt;&lt;/a&gt;1. 什么是 keystore
+        
+      
+    
+    </summary>
+    
+      <category term="Ethereum(以太坊)" scheme="http://stevenocean.github.io/categories/Ethereum-%E4%BB%A5%E5%A4%AA%E5%9D%8A/"/>
+    
+      <category term="blockchain(区块链)" scheme="http://stevenocean.github.io/categories/Ethereum-%E4%BB%A5%E5%A4%AA%E5%9D%8A/blockchain-%E5%8C%BA%E5%9D%97%E9%93%BE/"/>
+    
+    
+      <category term="Ethereum" scheme="http://stevenocean.github.io/tags/Ethereum/"/>
+    
+      <category term="以太坊" scheme="http://stevenocean.github.io/tags/%E4%BB%A5%E5%A4%AA%E5%9D%8A/"/>
+    
+      <category term="区块链" scheme="http://stevenocean.github.io/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/"/>
+    
+      <category term="blockchain" scheme="http://stevenocean.github.io/tags/blockchain/"/>
+    
+      <category term="keystore" scheme="http://stevenocean.github.io/tags/keystore/"/>
+    
+  </entry>
   
   <entry>
     <title>go-ethereum 源码分析 - ethdb(3)</title>
