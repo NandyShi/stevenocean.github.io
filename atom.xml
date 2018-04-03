@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://stevenocean.github.io/"/>
-  <updated>2018-04-03T09:48:39.013Z</updated>
+  <updated>2018-04-03T09:50:27.368Z</updated>
   <id>http://stevenocean.github.io/</id>
   
   <author>
@@ -21,17 +21,14 @@
     <link href="http://stevenocean.github.io/2018/04/02/about-ethereum-keystore.html"/>
     <id>http://stevenocean.github.io/2018/04/02/about-ethereum-keystore.html</id>
     <published>2018-04-02T15:58:00.000Z</published>
-    <updated>2018-04-03T09:48:39.013Z</updated>
+    <updated>2018-04-03T09:50:27.368Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;h2 id=&quot;1-什么是-keystore-文件&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;#1-什么是-keystore-文件&quot;&gt;&lt;/a&gt;1. 什么是 keystore
-        
-      
+      &lt;h2 id=&quot;1-什么是-keystore-文件&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;#1-什么是-keystore-文件&quot;&gt;&lt;/a&gt;1. 什么是 keystore 文件&lt;/h2&gt;
+&lt;p&gt;以太坊的每个外部账户都是由一对密钥（一个公钥和一个私钥）定义的。账户以地址为索引，地址由公钥衍生而来，取公钥的最后 20个字节。每对私钥 /地址都编码在一个钥匙文件里，也就是我们说的keystore文件。该文件是 JSON 文本文件，可以用任何文本编辑器打开和浏览。钥匙文件的关键部分，账户私钥，通常用你创建帐户时设置的密码进行加密。也就是说 keystore 文件，就是你独有的、用于签署交易的以太坊私钥的加密文件。如果你丢失了这个文件，你就丢失了私钥，意味着你失去了签署交易的能力，意味着你的资金被永久的锁定在了你的账户里。&lt;/p&gt;
+&lt;h2 id=&quot;2-keystore-文件的内容&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;#2-keystore-文件的内容&quot;&gt;&lt;/a&gt;2. keystore 文件的内容&lt;/h2&gt;
+&lt;p&gt;我们先看一下keystore文件都包含哪些数据:&lt;/p&gt;
     
     </summary>
     
