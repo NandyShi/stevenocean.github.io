@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://stevenocean.github.io/"/>
-  <updated>2018-04-03T10:07:16.944Z</updated>
+  <updated>2018-04-07T09:02:32.224Z</updated>
   <id>http://stevenocean.github.io/</id>
   
   <author>
@@ -15,6 +15,43 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>使用 Web3J 发个以太坊 ERC20 Token</title>
+    <link href="http://stevenocean.github.io/2018/04/06/web3j-ethereum-token.html"/>
+    <id>http://stevenocean.github.io/2018/04/06/web3j-ethereum-token.html</id>
+    <published>2018-04-06T14:39:00.000Z</published>
+    <updated>2018-04-07T09:02:32.224Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;0-关于-erc20-规范&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;#0-关于-erc20-规范&quot;&gt;&lt;/a&gt;0，关于 ERC20 规范&lt;/h2&gt;
+&lt;p&gt;ERC20 为 Ethereum 上的 Token 合约标准规范，遵守该规范的 Token 合约可以被各种以太坊钱包、以及相关的平台和项目支持，如在 etherscan 上可以查看遵守 ERC20 规范的 Token 信息和交易记录。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="Ethereum(以太坊)" scheme="http://stevenocean.github.io/categories/Ethereum-%E4%BB%A5%E5%A4%AA%E5%9D%8A/"/>
+    
+      <category term="blockchain(区块链)" scheme="http://stevenocean.github.io/categories/Ethereum-%E4%BB%A5%E5%A4%AA%E5%9D%8A/blockchain-%E5%8C%BA%E5%9D%97%E9%93%BE/"/>
+    
+      <category term="Smart Contract(智能合约)" scheme="http://stevenocean.github.io/categories/Ethereum-%E4%BB%A5%E5%A4%AA%E5%9D%8A/blockchain-%E5%8C%BA%E5%9D%97%E9%93%BE/Smart-Contract-%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6/"/>
+    
+    
+      <category term="Ethereum" scheme="http://stevenocean.github.io/tags/Ethereum/"/>
+    
+      <category term="以太坊" scheme="http://stevenocean.github.io/tags/%E4%BB%A5%E5%A4%AA%E5%9D%8A/"/>
+    
+      <category term="区块链" scheme="http://stevenocean.github.io/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/"/>
+    
+      <category term="blockchain" scheme="http://stevenocean.github.io/tags/blockchain/"/>
+    
+      <category term="keystore" scheme="http://stevenocean.github.io/tags/keystore/"/>
+    
+      <category term="web3j" scheme="http://stevenocean.github.io/tags/web3j/"/>
+    
+      <category term="solidity" scheme="http://stevenocean.github.io/tags/solidity/"/>
+    
+  </entry>
   
   <entry>
     <title>以太坊账户管理之 keystore 文件(科普)</title>
@@ -96,11 +133,37 @@
   </entry>
   
   <entry>
+    <title>go-ethereum 源码分析 - mobile(3)</title>
+    <link href="http://stevenocean.github.io/2018/03/31/go-ethereum-source-analysis-4.html"/>
+    <id>http://stevenocean.github.io/2018/03/31/go-ethereum-source-analysis-4.html</id>
+    <published>2018-03-31T14:58:00.000Z</published>
+    <updated>2018-04-03T12:09:04.696Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+      <category term="Ethereum(以太坊)" scheme="http://stevenocean.github.io/categories/Ethereum-%E4%BB%A5%E5%A4%AA%E5%9D%8A/"/>
+    
+      <category term="blockchain(区块链)" scheme="http://stevenocean.github.io/categories/Ethereum-%E4%BB%A5%E5%A4%AA%E5%9D%8A/blockchain-%E5%8C%BA%E5%9D%97%E9%93%BE/"/>
+    
+    
+      <category term="Ethereum" scheme="http://stevenocean.github.io/tags/Ethereum/"/>
+    
+      <category term="以太坊" scheme="http://stevenocean.github.io/tags/%E4%BB%A5%E5%A4%AA%E5%9D%8A/"/>
+    
+      <category term="区块链" scheme="http://stevenocean.github.io/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/"/>
+    
+      <category term="blockchain" scheme="http://stevenocean.github.io/tags/blockchain/"/>
+    
+  </entry>
+  
+  <entry>
     <title>以太坊中的各种术语解释(持续更新)</title>
     <link href="http://stevenocean.github.io/2018/03/19/ethereum-terms.html"/>
     <id>http://stevenocean.github.io/2018/03/19/ethereum-terms.html</id>
     <published>2018-03-19T06:58:00.000Z</published>
-    <updated>2018-03-23T16:10:23.242Z</updated>
+    <updated>2018-04-04T08:53:55.871Z</updated>
     
     <summary type="html">
     
