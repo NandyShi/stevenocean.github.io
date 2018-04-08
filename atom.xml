@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://stevenocean.github.io/"/>
-  <updated>2018-04-08T07:13:15.743Z</updated>
+  <updated>2018-04-08T07:37:51.923Z</updated>
   <id>http://stevenocean.github.io/</id>
   
   <author>
@@ -21,11 +21,11 @@
     <link href="http://stevenocean.github.io/2018/04/06/web3j-ethereum-token.html"/>
     <id>http://stevenocean.github.io/2018/04/06/web3j-ethereum-token.html</id>
     <published>2018-04-06T14:39:00.000Z</published>
-    <updated>2018-04-08T07:13:15.743Z</updated>
+    <updated>2018-04-08T07:37:51.923Z</updated>
     
     <summary type="html">
     
-      &lt;h2 id=&quot;0-关于-erc20-规范&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;#0-关于-erc20-规范&quot;&gt;&lt;/a&gt;0，关于 ERC20 规范&lt;/h2&gt;
+      &lt;h2 id=&quot;关于-erc20-规范&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;#关于-erc20-规范&quot;&gt;&lt;/a&gt;关于 ERC20 规范&lt;/h2&gt;
 &lt;p&gt;ERC20 为 Ethereum 上的 Token 合约标准规范，遵守该规范的 Token 合约可以被各种以太坊钱包、以及相关的平台和项目支持，如在 etherscan 上可以查看遵守 ERC20 规范的 Token 信息和交易记录。&lt;/p&gt;
     
     </summary>
