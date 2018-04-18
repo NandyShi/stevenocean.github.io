@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://stevenocean.github.io/"/>
-  <updated>2018-04-08T07:37:51.923Z</updated>
+  <updated>2018-04-18T08:47:40.483Z</updated>
   <id>http://stevenocean.github.io/</id>
   
   <author>
@@ -15,6 +15,46 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>基于 Truffle 编写、编译和部署合约</title>
+    <link href="http://stevenocean.github.io/2018/04/18/contract-with-truffle-1.html"/>
+    <id>http://stevenocean.github.io/2018/04/18/contract-with-truffle-1.html</id>
+    <published>2018-04-18T06:58:00.000Z</published>
+    <updated>2018-04-18T08:47:40.483Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;关于-truffle&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;#关于-truffle&quot;&gt;&lt;/a&gt;关于 Truffle&lt;/h2&gt;
+&lt;p&gt;简单来说，Truffle 就是一个用于开发以太坊合约的集成框架，其支持的很多命令可以方便灵活的支持编译、测试、部署合约或者DApp。关于 Truffle 更详细的介绍，可以参考&lt;a href=&quot;http://truffleframework.com/docs/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;&lt;strong&gt;Truffle 官方文档&lt;/strong&gt;&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;下面从编写、编译和部署一个简单的合约来看一下 Truffle 框架的使用。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;下面以项目 &lt;strong&gt;HelloToken&lt;/strong&gt; 为例，各个步骤的操作都假设已安装了 truffle 和 geth 环境。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://truffleframework.com/docs/getting_started/installation&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;truffle 安装参考&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+    
+    </summary>
+    
+      <category term="Truffle" scheme="http://stevenocean.github.io/categories/Truffle/"/>
+    
+    
+      <category term="Ethereum" scheme="http://stevenocean.github.io/tags/Ethereum/"/>
+    
+      <category term="以太坊" scheme="http://stevenocean.github.io/tags/%E4%BB%A5%E5%A4%AA%E5%9D%8A/"/>
+    
+      <category term="区块链" scheme="http://stevenocean.github.io/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/"/>
+    
+      <category term="blockchain" scheme="http://stevenocean.github.io/tags/blockchain/"/>
+    
+      <category term="truffle" scheme="http://stevenocean.github.io/tags/truffle/"/>
+    
+      <category term="合约账户" scheme="http://stevenocean.github.io/tags/%E5%90%88%E7%BA%A6%E8%B4%A6%E6%88%B7/"/>
+    
+      <category term="Contract" scheme="http://stevenocean.github.io/tags/Contract/"/>
+    
+  </entry>
   
   <entry>
     <title>使用 Web3J 发个以太坊 ERC20 Token</title>
@@ -137,7 +177,7 @@
     <link href="http://stevenocean.github.io/2018/03/19/ethereum-terms.html"/>
     <id>http://stevenocean.github.io/2018/03/19/ethereum-terms.html</id>
     <published>2018-03-19T06:58:00.000Z</published>
-    <updated>2018-04-07T09:13:32.499Z</updated>
+    <updated>2018-04-17T02:31:30.005Z</updated>
     
     <summary type="html">
     
@@ -177,9 +217,9 @@
     
       <category term="blockchain" scheme="http://stevenocean.github.io/tags/blockchain/"/>
     
-      <category term="账户" scheme="http://stevenocean.github.io/tags/%E8%B4%A6%E6%88%B7/"/>
-    
       <category term="合约账户" scheme="http://stevenocean.github.io/tags/%E5%90%88%E7%BA%A6%E8%B4%A6%E6%88%B7/"/>
+    
+      <category term="账户" scheme="http://stevenocean.github.io/tags/%E8%B4%A6%E6%88%B7/"/>
     
       <category term="Account" scheme="http://stevenocean.github.io/tags/Account/"/>
     
@@ -192,7 +232,7 @@
     <link href="http://stevenocean.github.io/2018/03/17/go-ethereum-source-analysize-1.html"/>
     <id>http://stevenocean.github.io/2018/03/17/go-ethereum-source-analysize-1.html</id>
     <published>2018-03-17T15:58:00.000Z</published>
-    <updated>2018-04-03T09:30:13.327Z</updated>
+    <updated>2018-04-15T08:39:55.257Z</updated>
     
     <summary type="html">
     
