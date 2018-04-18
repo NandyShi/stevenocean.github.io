@@ -5,10 +5,10 @@
     
   <url>
     <loc>http://stevenocean.github.io/2018/04/18/contract-with-truffle-1.html</loc>
-    <lastmod>2018-04-18T08:47:40.483Z</lastmod>
+    <lastmod>2018-04-18T09:57:17.925Z</lastmod>
     <data>
         <display>
-        <title>基于 Truffle 编写、编译和部署合约</title>
+        <title>基于 Truffle 编写、编译、部署和调用合约</title>
         <pubTime>2018-04-18T06:58:00.000Z</pubTime>
         
         <tag>Ethereum</tag>

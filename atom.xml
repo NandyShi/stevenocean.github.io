@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://stevenocean.github.io/"/>
-  <updated>2018-04-18T08:47:40.483Z</updated>
+  <updated>2018-04-18T09:57:17.925Z</updated>
   <id>http://stevenocean.github.io/</id>
   
   <author>
@@ -17,11 +17,11 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>基于 Truffle 编写、编译和部署合约</title>
+    <title>基于 Truffle 编写、编译、部署和调用合约</title>
     <link href="http://stevenocean.github.io/2018/04/18/contract-with-truffle-1.html"/>
     <id>http://stevenocean.github.io/2018/04/18/contract-with-truffle-1.html</id>
     <published>2018-04-18T06:58:00.000Z</published>
-    <updated>2018-04-18T08:47:40.483Z</updated>
+    <updated>2018-04-18T09:57:17.925Z</updated>
     
     <summary type="html">
     
