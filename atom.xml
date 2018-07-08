@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://stevenocean.github.io/"/>
-  <updated>2018-04-18T09:57:17.925Z</updated>
+  <updated>2018-07-08T15:10:36.038Z</updated>
   <id>http://stevenocean.github.io/</id>
   
   <author>
@@ -15,6 +15,90 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>使用 web3.py 实现 ERC20 Token 空投</title>
+    <link href="http://stevenocean.github.io/2018/07/08/token-airdrop-with-web3py.html"/>
+    <id>http://stevenocean.github.io/2018/07/08/token-airdrop-with-web3py.html</id>
+    <published>2018-07-08T06:58:00.000Z</published>
+    <updated>2018-07-08T15:10:36.038Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;前言&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;#前言&quot;&gt;&lt;/a&gt;前言&lt;/h2&gt;
+&lt;p&gt;随着一些交易所搞的上币排名的活动开展，也带来了空投的火爆，当然也给以太坊整个网络带来了很大的考验（极其拥堵、交易费水涨船高），本篇文章还是从技术上来看看实现空投的一种通用方案。&lt;/p&gt;
+&lt;p&gt;关于空投的实现需要提前了解一下 ERC20 标准中的下面几个函数：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;approve(_spender, value)&lt;/strong&gt;：该函数表示允许 _spender 多次取回调用此函数的的账户中的 token，最高为 value 个 token，后面再次调用此函数会覆盖之前设置的余额；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;allowance(_owner, _spender)&lt;/strong&gt;：返回 _spender 仍然可以从 _owner 中提取的 token 余额；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;transferFrom(_from, _to, _value)&lt;/strong&gt;: 该方法主要用于允许 contract 来自动执行转账流程，并代表所有者发送 _value 个 token；&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;ERC20 标准的基础知识，可以看下这篇 &lt;strong&gt;&lt;a href=&quot;https://medium.com/@jgm.orinoco/understanding-erc-20-token-contracts-a809a7310aa5&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Understanding ERC-20 token contracts&lt;/a&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;实现和部署自己的符合 ERC20 Token 标准的文章，可以参考 &lt;strong&gt;&lt;a href=&quot;https://stevenocean.github.io/2018/04/06/web3j-ethereum-token.html&quot;&gt;使用 Web3J 发个以太坊 ERC20 Token&lt;/a&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;实现流程&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;#实现流程&quot;&gt;&lt;/a&gt;实现流程&lt;/h2&gt;
+&lt;img src=&quot;/2018/07/08/token-airdrop-with-web3py/token-airdrop-with-web3py-1.png&quot;&gt;
+    
+    </summary>
+    
+      <category term="Smart Contract(智能合约)" scheme="http://stevenocean.github.io/categories/Smart-Contract-%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6/"/>
+    
+    
+      <category term="Ethereum" scheme="http://stevenocean.github.io/tags/Ethereum/"/>
+    
+      <category term="以太坊" scheme="http://stevenocean.github.io/tags/%E4%BB%A5%E5%A4%AA%E5%9D%8A/"/>
+    
+      <category term="区块链" scheme="http://stevenocean.github.io/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/"/>
+    
+      <category term="blockchain" scheme="http://stevenocean.github.io/tags/blockchain/"/>
+    
+      <category term="合约账户" scheme="http://stevenocean.github.io/tags/%E5%90%88%E7%BA%A6%E8%B4%A6%E6%88%B7/"/>
+    
+      <category term="Contract" scheme="http://stevenocean.github.io/tags/Contract/"/>
+    
+      <category term="airdrop" scheme="http://stevenocean.github.io/tags/airdrop/"/>
+    
+      <category term="ERC20" scheme="http://stevenocean.github.io/tags/ERC20/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Swarm 基础</title>
+    <link href="http://stevenocean.github.io/2018/04/19/swarm-basic.html"/>
+    <id>http://stevenocean.github.io/2018/04/19/swarm-basic.html</id>
+    <published>2018-04-19T13:20:00.000Z</published>
+    <updated>2018-04-18T10:56:20.658Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;https://swarm-guide.readthedocs.io/en/latest/introduction.html&lt;/p&gt;
+&lt;h2 id=&quot;关于-swarm&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;#关于-swarm&quot;&gt;&lt;/a&gt;关于
+        
+      
+    
+    </summary>
+    
+      <category term="Swarm" scheme="http://stevenocean.github.io/categories/Swarm/"/>
+    
+    
+      <category term="Ethereum" scheme="http://stevenocean.github.io/tags/Ethereum/"/>
+    
+      <category term="以太坊" scheme="http://stevenocean.github.io/tags/%E4%BB%A5%E5%A4%AA%E5%9D%8A/"/>
+    
+      <category term="区块链" scheme="http://stevenocean.github.io/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/"/>
+    
+      <category term="blockchain" scheme="http://stevenocean.github.io/tags/blockchain/"/>
+    
+      <category term="Swarm" scheme="http://stevenocean.github.io/tags/Swarm/"/>
+    
+  </entry>
   
   <entry>
     <title>基于 Truffle 编写、编译、部署和调用合约</title>
