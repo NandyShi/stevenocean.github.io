@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://stevenocean.github.io/"/>
-  <updated>2018-07-08T15:10:36.038Z</updated>
+  <updated>2018-08-09T08:21:46.323Z</updated>
   <id>http://stevenocean.github.io/</id>
   
   <author>
@@ -15,6 +15,47 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>使用以太坊的公钥和私钥对数据加解密</title>
+    <link href="http://stevenocean.github.io/2018/08/09/encrypt-and-decrypt-file-with-eth-key.html"/>
+    <id>http://stevenocean.github.io/2018/08/09/encrypt-and-decrypt-file-with-eth-key.html</id>
+    <published>2018-08-09T08:20:00.000Z</published>
+    <updated>2018-08-09T08:21:46.323Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1&gt;概述&lt;/h1&gt;
+&lt;p&gt;本篇主要尝试了采用 Ethereum 生成的私钥和公钥来对数据进行加解密。在进入示例之前先简单了解一下 Ethereum 私钥和公钥的生成过程。&lt;/p&gt;
+&lt;h1&gt;密钥对的生成&lt;/h1&gt;
+&lt;p&gt;其实无论是 Ethereum 还是
+        
+      
+    
+    </summary>
+    
+      <category term="Algorithm" scheme="http://stevenocean.github.io/categories/Algorithm/"/>
+    
+      <category term="Crypto" scheme="http://stevenocean.github.io/categories/Algorithm/Crypto/"/>
+    
+    
+      <category term="Ethereum" scheme="http://stevenocean.github.io/tags/Ethereum/"/>
+    
+      <category term="以太坊" scheme="http://stevenocean.github.io/tags/%E4%BB%A5%E5%A4%AA%E5%9D%8A/"/>
+    
+      <category term="ECDSA" scheme="http://stevenocean.github.io/tags/ECDSA/"/>
+    
+      <category term="Crypto" scheme="http://stevenocean.github.io/tags/Crypto/"/>
+    
+      <category term="ECC" scheme="http://stevenocean.github.io/tags/ECC/"/>
+    
+      <category term="BouncyCastle" scheme="http://stevenocean.github.io/tags/BouncyCastle/"/>
+    
+  </entry>
   
   <entry>
     <title>使用 web3.py 实现 ERC20 Token 空投</title>
