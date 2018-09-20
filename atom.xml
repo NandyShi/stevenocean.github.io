@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://stevenocean.github.io/"/>
-  <updated>2018-09-20T06:31:29.806Z</updated>
+  <updated>2018-09-20T06:35:11.691Z</updated>
   <id>http://stevenocean.github.io/</id>
   
   <author>
@@ -21,20 +21,17 @@
     <link href="http://stevenocean.github.io/2018/09/23/generate-hd-wallet-by-bip39.html"/>
     <id>http://stevenocean.github.io/2018/09/23/generate-hd-wallet-by-bip39.html</id>
     <published>2018-09-23T08:20:00.000Z</published>
-    <updated>2018-09-20T06:31:29.806Z</updated>
+    <updated>2018-09-20T06:35:11.691Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;h1&gt;关于 Bitcoin 的钱包&lt;/h1&gt;
+      &lt;h1&gt;关于 Bitcoin 的钱包&lt;/h1&gt;
 &lt;p&gt;在 Bitcoin 中有两种主要类型的钱包，分别为：&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;&lt;strong&gt;非确定性钱包（Nodeterministic
-        
-      
+&lt;li&gt;&lt;strong&gt;非确定性钱包（Nodeterministic Wallet）&lt;/strong&gt;：该钱包中的每个密钥都是从不同的随机数独立生成的，密钥彼此之间没有任何关系，这种钱包也被称为 JBOK 钱包（Just a Bunch Of Keys）；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;确定性钱包（Deterministic Wallet）&lt;/strong&gt;：其中所有的密钥都是从一个主密钥派生出来的，这个主密钥就是种子（seed），在该类型的钱包中，所有的密钥之间都是相互关联的，如果有原始种子，就可以再次生成全部的密钥；在确定性钱包中，可以使用不同的密钥推导方式。目前最常用的推导方法是 树状结构，也称为 &lt;strong&gt;分层确定性钱包&lt;/strong&gt; 或 &lt;strong&gt;HD 钱包&lt;/strong&gt;；&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;我们文章的目的就是生成 &lt;strong&gt;HD 钱包&lt;/strong&gt;，&lt;strong&gt;HD 钱包&lt;/strong&gt; 可以允许用户在不安全的服务器上使用，或者在每笔交易中使用不同的公钥。&lt;/p&gt;
     
     </summary>
     
