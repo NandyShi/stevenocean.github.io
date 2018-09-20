@@ -4,8 +4,43 @@
 
     
   <url>
+    <loc>http://stevenocean.github.io/2018/09/23/generate-hd-wallet-by-bip39.html</loc>
+    <lastmod>2018-09-20T06:31:29.806Z</lastmod>
+    <data>
+        <display>
+        <title>基于 BIP-32 和 BIP-39 规范生成 HD 钱包（分层确定性钱包）</title>
+        <pubTime>2018-09-23T08:20:00.000Z</pubTime>
+        
+        <tag>BIP39</tag>
+         
+        <tag>BIP32</tag>
+         
+        <tag>助记词</tag>
+         
+        <tag>HD Wallet</tag>
+         
+        <tag>确定性钱包</tag>
+         
+        <tag>Bitcoin</tag>
+         
+        <tag>比特币</tag>
+         
+         
+           
+             
+              <breadCrumb title="Bitcoin" url="http://stevenocean.github.io/categories/Bitcoin/"/>
+          
+             
+              <breadCrumb title="Wallet" url="http://stevenocean.github.io/categories/Bitcoin/Wallet/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://stevenocean.github.io/2018/08/09/encrypt-and-decrypt-file-with-eth-key.html</loc>
-    <lastmod>2018-08-09T08:24:22.460Z</lastmod>
+    <lastmod>2018-08-29T08:42:09.874Z</lastmod>
     <data>
         <display>
         <title>使用以太坊的公钥和私钥对数据加解密</title>

@@ -1,1 +1,1147 @@
-<!DOCTYPE html><html class="theme-next mist use-motion" lang="zh"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta name="theme-color" content="#222"><script src="/lib/pace/pace.min.js?v=1.0.2"></script><link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css"><link href="/css/main.css?v=6.0.5" rel="stylesheet" type="text/css"><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.5"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.5"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.5"><link rel="mask-icon" href="/images/logo.svg?v=6.0.5" color="#222"><script type="text/javascript" id="hexo.configurations">var NexT=window.NexT||{},CONFIG={root:"/",scheme:"Mist",version:"6.0.5",sidebar:{position:"left",display:"hide",offset:12,b2t:!1,scrollpercent:!1,onmobile:!1},fancybox:!1,fastclick:!1,lazyload:!1,tabs:!0,motion:{enable:!0,async:!1,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},algolia:{applicationID:"PJYZ7OZEJB",apiKey:"78ff9194440a75eba3a1be76689c2b0c",indexName:"steven-blog",hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}}}</script><meta name="description" content="前言 随着一些交易所搞的上币排名的活动开展，也带来了空投的火爆，当然也给以太坊整个网络带来了很大的考验（极其拥堵、交易费水涨船高），本篇文章还是从技术上来看看实现空投的一种通用方案。 关于空投的实现需要提前了解一下 ERC20 标准中的下面几个函数：  approve(_spender, value)：该函数表示允许 _spender 多次取回调用此函数的的账户中的 token，最高为 value"><meta name="keywords" content="Ethereum,以太坊,区块链,blockchain,合约账户,Contract,airdrop,ERC20"><meta property="og:type" content="article"><meta property="og:title" content="使用 web3.py 实现 ERC20 Token 空投"><meta property="og:url" content="http://stevenocean.github.io/2018/07/08/token-airdrop-with-web3py.html"><meta property="og:site_name" content="未来边缘"><meta property="og:description" content="前言 随着一些交易所搞的上币排名的活动开展，也带来了空投的火爆，当然也给以太坊整个网络带来了很大的考验（极其拥堵、交易费水涨船高），本篇文章还是从技术上来看看实现空投的一种通用方案。 关于空投的实现需要提前了解一下 ERC20 标准中的下面几个函数：  approve(_spender, value)：该函数表示允许 _spender 多次取回调用此函数的的账户中的 token，最高为 value"><meta property="og:locale" content="zh"><meta property="og:image" content="http://stevenocean.github.io/2018/07/08/token-airdrop-with-web3py/token-airdrop-with-web3py-1.png"><meta property="og:image" content="http://stevenocean.github.io/2018/07/08/token-airdrop-with-web3py/etherscan-airdrop-tx.jpg"><meta property="og:image" content="http://stevenocean.github.io/2018/07/08/token-airdrop-with-web3py/etherscan-airdrop-drop-tx.jpg"><meta property="og:updated_time" content="2018-07-08T15:10:36.038Z"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="使用 web3.py 实现 ERC20 Token 空投"><meta name="twitter:description" content="前言 随着一些交易所搞的上币排名的活动开展，也带来了空投的火爆，当然也给以太坊整个网络带来了很大的考验（极其拥堵、交易费水涨船高），本篇文章还是从技术上来看看实现空投的一种通用方案。 关于空投的实现需要提前了解一下 ERC20 标准中的下面几个函数：  approve(_spender, value)：该函数表示允许 _spender 多次取回调用此函数的的账户中的 token，最高为 value"><meta name="twitter:image" content="http://stevenocean.github.io/2018/07/08/token-airdrop-with-web3py/token-airdrop-with-web3py-1.png"><link rel="alternate" href="/atom.xml" title="未来边缘" type="application/atom+xml"><link rel="canonical" href="http://stevenocean.github.io/2018/07/08/token-airdrop-with-web3py.html"><script type="text/javascript" id="page.configurations">CONFIG.page={sidebar:""}</script><title>使用 web3.py 实现 ERC20 Token 空投 | 未来边缘</title><script async src="https://www.googletagmanager.com/gtag/js?id=UA-115901531-1"></script><script>function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","UA-115901531-1")</script><noscript><style type="text/css">.sidebar-inner,.use-motion .brand,.use-motion .collection-title,.use-motion .comments,.use-motion .menu-item,.use-motion .motion-element,.use-motion .pagination,.use-motion .post-block,.use-motion .post-body,.use-motion .post-header{opacity:initial}.use-motion .logo,.use-motion .site-subtitle,.use-motion .site-title{opacity:initial;top:initial}.logo-line-after i{right:initial}</style></noscript></head><body itemscope itemtype="http://schema.org/WebPage" lang="zh"><div class="container sidebar-position-left page-post-detail"><div class="headband"></div><header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-wrapper"><div class="site-meta"><div class="custom-logo-site-title"><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span> <span class="site-title">未来边缘</span><span class="logo-line-after"><i></i></span></a></div><h1 class="site-subtitle" itemprop="description"></h1></div><div class="site-nav-toggle"> <button aria-label="Toggle navigation bar"><span class="btn-bar"></span><span class="btn-bar"></span><span class="btn-bar"></span></button></div></div><nav class="site-nav"><ul id="menu" class="menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i><br>Home</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i><br>Archives</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i><br>Categories</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i><br>Tags</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i><br>About</a></li><li class="menu-item menu-item-search"><a href="javascript:;" class="popup-trigger"><i class="menu-item-icon fa fa-search fa-fw"></i><br>Search</a></li></ul><div class="site-search"><div class="algolia-popup popup search-popup"><div class="algolia-search"><div class="algolia-search-input-icon"><i class="fa fa-search"></i></div><div class="algolia-search-input" id="algolia-search-input"></div></div><div class="algolia-results"><div id="algolia-stats"></div><div id="algolia-hits"></div><div id="algolia-pagination" class="algolia-pagination"></div></div><span class="popup-btn-close"><i class="fa fa-times-circle"></i></span></div></div></nav></div></header><main id="main" class="main"><div class="main-inner"><div class="content-wrap"><div id="content" class="content"><div id="posts" class="posts-expand"><article class="post post-type-normal" itemscope itemtype="http://schema.org/Article"><div class="post-block"><link itemprop="mainEntityOfPage" href="http://stevenocean.github.io/2018/07/08/token-airdrop-with-web3py.html"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="name" content="Steven"><meta itemprop="description" content=""><meta itemprop="image" content="/images/avatar.gif"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="未来边缘"></span><header class="post-header"><h2 class="post-title" itemprop="name headline">使用 web3.py 实现 ERC20 Token 空投</h2><div class="post-meta"><span class="post-time"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">Posted on</span> <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-07-08T14:58:00+08:00">2018-07-08</time></span> <span class="post-category"><span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">In</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Smart-Contract-智能合约/" itemprop="url" rel="index"><span itemprop="name">Smart Contract(智能合约)</span></a></span></span> <span class="post-comments-count"><span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-comment-o"></i></span><a href="/2018/07/08/token-airdrop-with-web3py.html#comments" itemprop="discussionUrl"><span class="post-comments-count gitment-comments-count" data-xid="/2018/07/08/token-airdrop-with-web3py.html" itemprop="commentsCount"></span></a></span></div></header><div class="post-body" itemprop="articleBody"><h2 id="前言"><a class="header-anchor" href="#前言"></a>前言</h2><p>随着一些交易所搞的上币排名的活动开展，也带来了空投的火爆，当然也给以太坊整个网络带来了很大的考验（极其拥堵、交易费水涨船高），本篇文章还是从技术上来看看实现空投的一种通用方案。</p><p>关于空投的实现需要提前了解一下 ERC20 标准中的下面几个函数：</p><ul><li><strong>approve(_spender, value)</strong>：该函数表示允许 _spender 多次取回调用此函数的的账户中的 token，最高为 value 个 token，后面再次调用此函数会覆盖之前设置的余额；</li><li><strong>allowance(_owner, _spender)</strong>：返回 _spender 仍然可以从 _owner 中提取的 token 余额；</li><li><strong>transferFrom(_from, _to, _value)</strong>: 该方法主要用于允许 contract 来自动执行转账流程，并代表所有者发送 _value 个 token；</li></ul><blockquote><ul><li>ERC20 标准的基础知识，可以看下这篇 <strong><a href="https://medium.com/@jgm.orinoco/understanding-erc-20-token-contracts-a809a7310aa5" target="_blank" rel="noopener">Understanding ERC-20 token contracts</a></strong></li><li>实现和部署自己的符合 ERC20 Token 标准的文章，可以参考 <strong><a href="https://stevenocean.github.io/2018/04/06/web3j-ethereum-token.html">使用 Web3J 发个以太坊 ERC20 Token</a></strong></li></ul></blockquote><h2 id="实现流程"><a class="header-anchor" href="#实现流程"></a>实现流程</h2> <img src="/2018/07/08/token-airdrop-with-web3py/token-airdrop-with-web3py-1.png"><a id="more"></a><p>流程说明：</p><ol><li>账户 <strong>A</strong> 创建和部署 ERC20 Token <strong>SOT</strong>；</li><li>账户 <strong>B</strong> 创建和部署空投合约 <strong>Airdrop</strong>；</li><li>需要空投的账户 <strong>C</strong>（如运营人员账户）授信合约账户 <strong>Airdrop</strong> 使用其账户上拥有的一定数额的 <strong>SOT</strong> token；</li><li>授信成功后，通过调用 <strong>Airdrop</strong> 的空投方法 <strong>drop</strong> 实现给账户 <strong>a,b,c</strong> 发送 <strong>SOT</strong> token；</li><li>在 <strong>Airdrop</strong> 的方法 <strong>drop</strong> 内部通过调用 <strong>SOT</strong> 的 <strong>transferFrom</strong> 方法实现转账；</li></ol><h2 id="环境准备"><a class="header-anchor" href="#环境准备"></a>环境准备</h2><ul><li><strong>python3</strong></li><li><strong><a href="https://github.com/ethereum/web3.py" target="_blank" rel="noopener">web3.py</a></strong></li><li><strong><a href="https://github.com/ethereum/solidity" target="_blank" rel="noopener">solc</a></strong></li><li>测试网络 Ropsten（Rinkeby 也可以）已同步</li></ul><h2 id="用于部署合约的程序"><a class="header-anchor" href="#用于部署合约的程序"></a>用于部署合约的程序</h2><p>如下为使用 web3.py 部署合约（deploy_contract.py）的代码：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"><span class="comment"># -*- coding:utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> web3 <span class="keyword">import</span> Web3</span><br><span class="line"><span class="keyword">from</span> web3 <span class="keyword">import</span> HTTPProvider</span><br><span class="line"><span class="keyword">from</span> solc <span class="keyword">import</span> compile_source</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">load_contract_source_code</span><span class="params">(source_code_file)</span>:</span></span><br><span class="line">    contract_source_code = <span class="string">''</span></span><br><span class="line">    <span class="keyword">with</span> open(source_code_file) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> f:</span><br><span class="line">            contract_source_code += line + <span class="string">'\n'</span></span><br><span class="line">    <span class="keyword">return</span> contract_source_code</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">(argv)</span>:</span></span><br><span class="line">    <span class="string">"""deploy_contract &lt;contract name&gt; &lt;contract code path&gt; &lt;account address&gt; &lt;gas price, unit: Gwei&gt;</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    code = load_contract_source_code(argv[<span class="number">2</span>])</span><br><span class="line">    compiled_sol = compile_source(code)</span><br><span class="line">    contract_interface = compiled_sol[<span class="string">'&lt;stdin&gt;:'</span> + argv[<span class="number">1</span>]]</span><br><span class="line">    account_address = argv[<span class="number">3</span>]</span><br><span class="line">    gas_price = int(argv[<span class="number">4</span>]) * <span class="number">10</span> ** <span class="number">9</span></span><br><span class="line"></span><br><span class="line">    w3 = Web3(HTTPProvider(<span class="string">"http://127.0.0.1:8545"</span>))</span><br><span class="line">    contract = w3.eth.contract(abi=contract_interface[<span class="string">'abi'</span>], bytecode=contract_interface[<span class="string">'bin'</span>])</span><br><span class="line">    tx_param = &#123;</span><br><span class="line">        <span class="string">'from'</span>: account_address,</span><br><span class="line">        <span class="string">'gasPrice'</span>: gas_price,</span><br><span class="line">    &#125;</span><br><span class="line">    tx_hash = contract.deploy(transaction=tx_param)</span><br><span class="line">    print(<span class="string">"deploying, tx_hash &#123;&#125;"</span>.format(Web3.toHex(tx_hash)))</span><br><span class="line"></span><br><span class="line">    tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)</span><br><span class="line">    print(<span class="string">"receipt: "</span>, tx_receipt)</span><br></pre></td></tr></table></figure><h2 id="编写合约-airdrop"><a class="header-anchor" href="#编写合约-airdrop"></a>编写合约 <strong>Airdrop</strong></h2><p>这里的合约代码实现逻辑是先将</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">pragma solidity ^0.4.22;</span><br><span class="line"></span><br><span class="line">contract ERC20Token &#123;</span><br><span class="line">    uint256 public totalSupply;</span><br><span class="line">    function balanceOf(address _owner) public constant returns (uint256 balance);</span><br><span class="line">    function transfer(address _to, uint256 _value) public returns (bool success);</span><br><span class="line">    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success);</span><br><span class="line">    function approve(address _spender, uint256 _value) public returns (bool success);</span><br><span class="line">    function allowance(address _owner, address _spender) public constant returns (uint256 remaining);</span><br><span class="line">    event Transfer(address indexed _from, address indexed _to, uint256 _value);</span><br><span class="line">    event Approval(address indexed _owner, address indexed _spender, uint256 _value);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">contract FutureEdgeAirdrop &#123;</span><br><span class="line">    function drop(address tokenAddr, address[] dests, uint256 value) public payable &#123;</span><br><span class="line">        uint256 valuePerCount = value / dests.length；</span><br><span class="line">        for (uint i = 0; i &lt; dests.length; i++) &#123;</span><br><span class="line">            ERC20Token(tokenAddr).transferFrom(msg.sender, dests[i], valuePerCount);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="部署合约-airdrop"><a class="header-anchor" href="#部署合约-airdrop"></a>部署合约 <strong>Airdrop</strong></h2><p>使用之前的 deploy_contract 来部署合约，提供合约名称、合约代码文件、以及部署合约的账号名和 GasPrice，如下：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> deploy FutureEdgeAirdrop FutureEdgeAirdrop.sol 0xEcD3E082Df97E509D83c71e660b9Fd5EfCB92345 120</span></span><br><span class="line">account: 0xEcD3E082Df97E509D83c71e660b9Fd5EfCB92345</span><br><span class="line">deploying, tx_hash is 0x3852944e009b1acbe556b78516dbfdadd1080429cf723f6f71c78e669b299d42</span><br><span class="line">tx_receipt: &#123;"blockHash": "0x9e2c321dbfaa1236adbd0b5eef2ee14577c951573c6ca665758ab7f1dabe7ea7", "contractAddress": "0xd3D476033145a976fF0304de7CAD767Ba2DBa1F4", "cumulativeGasUsed": 209681, "from": "0xecd3e082df97e509d83c71e660b9fd5efcb92345", "status": 1, "transactionHash": "0x5387e031881b2f3a49b917ed3bdeb76691c9d845d9f3f72ad00a1530b3a4347e", "to": null&#125;</span><br></pre></td></tr></table></figure><p>按照其中的 transaction hash 查询 etherscan 如下：</p> <img src="/2018/07/08/token-airdrop-with-web3py/etherscan-airdrop-tx.jpg"><p>新创建的 Airdrop 合约地址为: 0xd3D476033145a976fF0304de7CAD767Ba2DBa1F4</p><h2 id="授信合约账号"><a class="header-anchor" href="#授信合约账号"></a>授信合约账号</h2><p>账号 <strong>C</strong>（我们测试环境使用的账号是 0xEfd0367D44bf23159599Fc525e797c9b79B6dEEC）授权给 <strong>Airdrop</strong> 合约账号可以提取其中的 6666 个 <strong>SOT</strong> token（地址为: 0x814f06FFaD575cb9F13A62C835bc505394CB4678），代码实现如下：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">approve</span><span class="params">(account_addr, token_addr, spender, token_count, gas_price)</span>:</span></span><br><span class="line">    w3 = Web3(HTTPProvider(<span class="string">"http://127.0.0.1:8545"</span>))</span><br><span class="line">    w3.defaultAccount = account_addr</span><br><span class="line">    token = w3.eth.contract(address=token_addr, abi=erc20_abi)</span><br><span class="line">    tx_hash = token.functions.approve(spender, token_count).transact(&#123;</span><br><span class="line">        <span class="string">"from"</span>: account_addr,</span><br><span class="line">        <span class="string">"gasPrice"</span>: gas_price * <span class="number">10</span> ** <span class="number">9</span></span><br><span class="line">    &#125;)</span><br><span class="line">    tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)</span><br><span class="line">    print(<span class="string">"receipt: "</span>, tx_receipt)</span><br></pre></td></tr></table></figure><p>针对上面的需求，相应的参数分别为：</p><ul><li><strong>account_addr</strong>: 这里为 <strong>C</strong>；</li><li><strong>token_addr</strong>： <strong>SOT</strong> 的合约地址，其中用于生成相应的 contract 类实例；</li><li><strong>spender</strong>：这里被授权的是 <strong>Airdrop</strong> 合约地址；</li><li><strong>token_count</strong>：被授权使用的 token 数；</li></ul><p>调用执行后如下：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> acctexplorer approve 0xEfd0367D44bf23159599Fc525e797c9b79B6dEEC 0x814f06FFaD575cb9F13A62C835bc505394CB4678 0xd3D476033145a976fF0304de7CAD767Ba2DBa1F4 6666000000000000000000 30</span></span><br><span class="line">Commit approve, txhash 0x5800e276f887c7a0f5d73fb9db31f95be7bb609270ba49c29eb5473a51fe61ce, waiting receipt ...</span><br><span class="line">------ approve ------</span><br><span class="line">account: 0xEfd0367D44bf23159599Fc525e797c9b79B6dEEC</span><br><span class="line">token: 0x814f06FFaD575cb9F13A62C835bc505394CB4678(StevenOceanToken) SOT</span><br><span class="line">spender: 0xd3D476033145a976fF0304de7CAD767Ba2DBa1F4</span><br><span class="line">count: 6666000000000000000000</span><br><span class="line">----- receipt -----</span><br><span class="line">&#123;</span><br><span class="line">  "blockHash": "0xe9f6f93965cc7640e92e9fc83a81e446e53ba89219f2b4bdf6c749a212179e8e",</span><br><span class="line">  "contractAddress": null,</span><br><span class="line">  "cumulativeGasUsed": 120369,</span><br><span class="line">  "from": "0xefd0367d44bf23159599fc525e797c9b79b6deec",</span><br><span class="line">  "status": 1,</span><br><span class="line">  "transactionHash": "0xccdc1f637e92d34e39282a0358cdea4810c15f5036ea2cd72f749a3279c6cfc3",</span><br><span class="line">  "to": "0x814f06ffad575cb9f13a62c835bc505394cb4678"</span><br><span class="line">&#125;</span><br><span class="line">--------------------</span><br></pre></td></tr></table></figure><p>通过 allowance 来查看被授权的信息，代码实现如下：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">allowance</span><span class="params">(account_addr, token_addr, spender)</span>:</span></span><br><span class="line">    w3 = Web3(HTTPProvider(<span class="string">"http://127.0.0.1:8545"</span>))</span><br><span class="line">    token_instance = w3.eth.contract(address=token_addr, abi=erc20_abi, ContractFactoryClass=ConciseContract)</span><br><span class="line">    allow_token_count = token_instance.allowance(account_addr, spender)</span><br><span class="line">    print(<span class="string">"------ allowance ------"</span>)</span><br><span class="line">    print(<span class="string">"token: &#123;&#125;(&#123;&#125;) &#123;&#125;"</span>.format(token_addr, token_instance.name(), token_instance.symbol()))</span><br><span class="line">    print(<span class="string">"owner: &#123;&#125;"</span>.format(account_addr))</span><br><span class="line">    print(<span class="string">"spender: &#123;&#125;"</span>.format(spender))</span><br><span class="line">    print(<span class="string">"allowence count: &#123;&#125;"</span>.format(allow_token_count))</span><br><span class="line">    print(<span class="string">"--------------------"</span>)</span><br></pre></td></tr></table></figure><p>这里传入 <strong>C</strong> 的账户地址(<strong>account_addr</strong>)，<strong>SOT</strong> 的合约地址(<strong>token_addr</strong>)，以及被授信的 <strong>Airdrop</strong> 合约地址(<strong>spender</strong>) 之后，结果如下：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ acctexplorer allowance <span class="number">0xEfd0367D44bf23159599Fc525e797c9b79B6dEEC</span> <span class="number">0x814f06FFaD575cb9F13A62C835bc505394CB4678</span> <span class="number">0xd3D476033145a976fF0304de7CAD767Ba2DBa1F4</span></span><br><span class="line">------ allowance ------</span><br><span class="line">token: <span class="number">0x814f06FFaD575cb9F13A62C835bc505394CB4678</span>(StevenOceanToken) SOT</span><br><span class="line">owner: <span class="number">0xEfd0367D44bf23159599Fc525e797c9b79B6dEEC</span></span><br><span class="line">spender: <span class="number">0xd3D476033145a976fF0304de7CAD767Ba2DBa1F4</span></span><br><span class="line">allowence count: <span class="number">6666000000000000000000</span></span><br><span class="line">--------------------</span><br></pre></td></tr></table></figure><h2 id="执行空投"><a class="header-anchor" href="#执行空投"></a>执行空投</h2><p>上面账号 <strong>C</strong> 授信成功之后，可以通过 <strong>C</strong> 来执行 <strong>Airdrop</strong> 合约的 <strong>drop</strong> 方法来实现给账号 <strong>a, b, c</strong> 发送 <strong>SOT</strong> token，如下代码：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">airdrop</span><span class="params">(account_addr, token_addr, token_count, gas_price, dest_account_addrs)</span>:</span></span><br><span class="line">    w3 = Web3(HTTPProvider(<span class="string">"http://127.0.0.1:8545"</span>))</span><br><span class="line">    contract_instance = w3.eth.contract(address=AIRDROP_ADDR, abi=AIRDROP_ABI)</span><br><span class="line">    tx_hash = contract_instance.functions.drop(token_addr, dest_account_addrs, token_count).transact(&#123;</span><br><span class="line">        <span class="string">"from"</span>: account_addr,</span><br><span class="line">        <span class="string">"gasPrice"</span>: gas_price * <span class="number">10</span> ** <span class="number">9</span></span><br><span class="line">    &#125;)</span><br><span class="line">    print(<span class="string">"Commit airdrop, txhash &#123;&#125;, waiting receipt ..."</span>.format(Web3.toHex(tx_hash)))</span><br><span class="line">    tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)</span><br><span class="line">    print(<span class="string">"receipt: "</span>, tx_receipt)</span><br></pre></td></tr></table></figure><blockquote><p>代码中的 <strong>AIRDROP_ADDR</strong> 为 Airdrop 的合约地址，<strong>AIRDROP_ABI</strong> 为 Airdrop 合约的 ABI（具体生成方法可以参考之前的文章）；</p></blockquote><p>这里通过 contract_instance 中的 functions.drop 来访问相应合约中的 drop 方法，这里演示了同时给两个账号各空投 256 个 SOT token（0x19f87671E1BFd859B203816e54fA19F464c9A155, 0x37a6e30c37fbe6af220a99a029a60e5848745AE9）。</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> acctexplorer airdrop 0xEfd0367D44bf23159599Fc525e797c9b79B6dEEC 0x814f06FFaD575cb9F13A62C835bc505394CB4678 789000000000000000000 30 0x19f87671E1BFd859B203816e54fA19F464c9A155 0x37a6e30c37fbe6af220a99a029a60e5848745AE9</span></span><br><span class="line">Commit airdrop, txhash 0x178eb4ad81d3160433b36cfc1357d50f2ef0ce758b4a7026d3cc72f42dd60dee, waiting receipt ...</span><br><span class="line">------ airdrop ------</span><br><span class="line">account: 0xEfd0367D44bf23159599Fc525e797c9b79B6dEEC</span><br><span class="line">token: 0x814f06FFaD575cb9F13A62C835bc505394CB4678(StevenOceanToken) SOT</span><br><span class="line">dest account: 0x37a6e30c37fbe6af220a99a029a60e5848745AE9</span><br><span class="line">count: 512000000000000000000</span><br><span class="line">----- receipt -----</span><br><span class="line">&#123;</span><br><span class="line">  "blockHash": "0x6e452edabcaf7e2e33433e4e243922fcb59dda5e6caa2852de0a2f3547ce4981",</span><br><span class="line">  "contractAddress": null,</span><br><span class="line">  "cumulativeGasUsed": 200618,</span><br><span class="line">  "from": "0xefd0367d44bf23159599fc525e797c9b79b6deec",</span><br><span class="line">  "status": 1,</span><br><span class="line">  "transactionHash": "0x3f371728058e3a1ca32408c6c9613801ba0559ade91b6b63a3a389f985b5b658",</span><br><span class="line">  "to": "0xd3d476033145a976ff0304de7cad767ba2dba1f4"</span><br><span class="line">&#125;</span><br><span class="line">--------------------</span><br></pre></td></tr></table></figure><p>我们可以查一下对应的 transaction 记录，如下：</p> <img src="/2018/07/08/token-airdrop-with-web3py/etherscan-airdrop-drop-tx.jpg"></div><div><ul class="post-copyright"><li class="post-copyright-author"> <strong>Post author:</strong> Steven Hu</li><li class="post-copyright-link"> <strong>Post link:</strong> <a href="http://stevenocean.github.io/2018/07/08/token-airdrop-with-web3py.html" title="使用 web3.py 实现 ERC20 Token 空投">http://stevenocean.github.io/2018/07/08/token-airdrop-with-web3py.html</a></li><li class="post-copyright-license"> <strong>Copyright Notice:</strong> All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> unless stating additionally.</li></ul></div><footer class="post-footer"><div class="post-tags"> <a href="/tags/Ethereum/" rel="tag"># Ethereum</a> <a href="/tags/以太坊/" rel="tag"># 以太坊</a> <a href="/tags/区块链/" rel="tag"># 区块链</a> <a href="/tags/blockchain/" rel="tag"># blockchain</a> <a href="/tags/合约账户/" rel="tag"># 合约账户</a> <a href="/tags/Contract/" rel="tag"># Contract</a> <a href="/tags/airdrop/" rel="tag"># airdrop</a> <a href="/tags/ERC20/" rel="tag"># ERC20</a></div><div class="post-nav"><div class="post-nav-next post-nav-item"><a href="/2018/04/19/swarm-basic.html" rel="next" title="Swarm 基础"><i class="fa fa-chevron-left"></i> Swarm 基础</a></div><span class="post-nav-divider"></span><div class="post-nav-prev post-nav-item"> <a href="/2018/08/09/encrypt-and-decrypt-file-with-eth-key.html" rel="prev" title="使用以太坊的公钥和私钥对数据加解密">使用以太坊的公钥和私钥对数据加解密<i class="fa fa-chevron-right"></i></a></div></div></footer></div></article><div class="post-spread"></div></div></div><div class="comments" id="comments"><div id="gitment-container"></div></div></div><div class="sidebar-toggle"><div class="sidebar-toggle-line-wrap"><span class="sidebar-toggle-line sidebar-toggle-line-first"></span><span class="sidebar-toggle-line sidebar-toggle-line-middle"></span><span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id="sidebar" class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap"> Table of Contents</li><li class="sidebar-nav-overview" data-target="site-overview-wrap"> Overview</li></ul><section class="site-overview-wrap sidebar-panel"><div class="site-overview"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"> <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="Steven"><p class="site-author-name" itemprop="name">Steven</p><p class="site-description motion-element" itemprop="description"></p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"> <a href="/archives/"><span class="site-state-item-count">11</span> <span class="site-state-item-name">posts</span></a></div><div class="site-state-item site-state-categories"> <a href="/categories/index.html"><span class="site-state-item-count">10</span> <span class="site-state-item-name">categories</span></a></div><div class="site-state-item site-state-tags"> <a href="/tags/index.html"><span class="site-state-item-count">25</span> <span class="site-state-item-name">tags</span></a></div></nav><div class="feed-link motion-element"><a href="/atom.xml" rel="alternate"><i class="fa fa-rss"></i> RSS</a></div><div class="links-of-author motion-element"><span class="links-of-author-item"><a href="https://github.com/stevenocean" target="_blank" title="GitHub" rel="external nofollow"><i class="fa fa-fw fa-github"></i> GitHub</a></span><span class="links-of-author-item"><a href="https://twitter.com/stevenhu2015" target="_blank" title="Twitter" rel="external nofollow"><i class="fa fa-fw fa-twitter"></i> Twitter</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-block"><div class="links-of-blogroll-title"><i class="fa fa-fw fa-link"></i> Links</div><ul class="links-of-blogroll-list"><li class="links-of-blogroll-item"> <a href="https://tangmi.me" title="Tangmi`s Blog" target="_blank">Tangmi`s Blog</a></li></ul></div></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class="post-toc"><div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现流程"><span class="nav-number">2.</span> <span class="nav-text">实现流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#环境准备"><span class="nav-number">3.</span> <span class="nav-text">环境准备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用于部署合约的程序"><span class="nav-number">4.</span> <span class="nav-text">用于部署合约的程序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编写合约-airdrop"><span class="nav-number">5.</span> <span class="nav-text">编写合约 Airdrop</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#部署合约-airdrop"><span class="nav-number">6.</span> <span class="nav-text">部署合约 Airdrop</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#授信合约账号"><span class="nav-number">7.</span> <span class="nav-text">授信合约账号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#执行空投"><span class="nav-number">8.</span> <span class="nav-text">执行空投</span></a></li></ol></div></div></section></div></aside></div></main><footer id="footer" class="footer"><div class="footer-inner"><div class="copyright">&copy; <span itemprop="copyrightYear">2018</span><span class="with-love"><i class="fa fa-user"></i></span> <span class="author" itemprop="copyrightHolder">Steven</span></div><div class="powered-by">Powered by <a class="theme-link" target="_blank" rel="external nofollow" href="https://hexo.io">Hexo</a></div> <span class="post-meta-divider">|</span><div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" rel="external nofollow" href="https://github.com/theme-next/hexo-theme-next">NexT.Mist</a></div></div></footer><div class="back-to-top"><i class="fa fa-arrow-up"></i></div></div><script type="text/javascript">"[object Function]"!==Object.prototype.toString.call(window.Promise)&&(window.Promise=null)</script><script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script><script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script><script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script><script type="text/javascript" src="/js/src/utils.js?v=6.0.5"></script><script type="text/javascript" src="/js/src/motion.js?v=6.0.5"></script><script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.5"></script><script type="text/javascript" src="/js/src/post-details.js?v=6.0.5"></script><script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.5"></script><link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css"><script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script><style>a.gitment-editor-footer-tip{display:none}.gitment-container.gitment-footer-container{display:none}</style><script type="text/javascript">function renderGitment(){new Gitmint({id:"1531033080000",owner:"stevenocean",repo:"stevenocean.github.io",lang:"en",oauth:{client_secret:"246d6cf5b59703cf5ebd4b2541775161201e91aa",client_id:"ac341f2c8219a55604f0"}}).render("gitment-container")}renderGitment()</script><link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css"><script src="/lib/algolia-instant-search/instantsearch.min.js"></script><script src="/js/src/algolia-search.js?v=6.0.5"></script></body></html>
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.5" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.5">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.5">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.5">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.5" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '6.0.5',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: 'PJYZ7OZEJB',
+      apiKey: '78ff9194440a75eba3a1be76689c2b0c',
+      indexName: 'steven-blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="前言 随着一些交易所搞的上币排名的活动开展，也带来了空投的火爆，当然也给以太坊整个网络带来了很大的考验（极其拥堵、交易费水涨船高），本篇文章还是从技术上来看看实现空投的一种通用方案。 关于空投的实现需要提前了解一下 ERC20 标准中的下面几个函数：  approve(_spender, value)：该函数表示允许 _spender 多次取回调用此函数的的账户中的 token，最高为 value">
+<meta name="keywords" content="Ethereum,以太坊,区块链,blockchain,合约账户,Contract,airdrop,ERC20">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 web3.py 实现 ERC20 Token 空投">
+<meta property="og:url" content="http://stevenocean.github.io/2018/07/08/token-airdrop-with-web3py.html">
+<meta property="og:site_name" content="未来边缘">
+<meta property="og:description" content="前言 随着一些交易所搞的上币排名的活动开展，也带来了空投的火爆，当然也给以太坊整个网络带来了很大的考验（极其拥堵、交易费水涨船高），本篇文章还是从技术上来看看实现空投的一种通用方案。 关于空投的实现需要提前了解一下 ERC20 标准中的下面几个函数：  approve(_spender, value)：该函数表示允许 _spender 多次取回调用此函数的的账户中的 token，最高为 value">
+<meta property="og:locale" content="zh">
+<meta property="og:image" content="http://stevenocean.github.io/2018/07/08/token-airdrop-with-web3py/token-airdrop-with-web3py-1.png">
+<meta property="og:image" content="http://stevenocean.github.io/2018/07/08/token-airdrop-with-web3py/etherscan-airdrop-tx.jpg">
+<meta property="og:image" content="http://stevenocean.github.io/2018/07/08/token-airdrop-with-web3py/etherscan-airdrop-drop-tx.jpg">
+<meta property="og:updated_time" content="2018-07-08T15:10:36.038Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用 web3.py 实现 ERC20 Token 空投">
+<meta name="twitter:description" content="前言 随着一些交易所搞的上币排名的活动开展，也带来了空投的火爆，当然也给以太坊整个网络带来了很大的考验（极其拥堵、交易费水涨船高），本篇文章还是从技术上来看看实现空投的一种通用方案。 关于空投的实现需要提前了解一下 ERC20 标准中的下面几个函数：  approve(_spender, value)：该函数表示允许 _spender 多次取回调用此函数的的账户中的 token，最高为 value">
+<meta name="twitter:image" content="http://stevenocean.github.io/2018/07/08/token-airdrop-with-web3py/token-airdrop-with-web3py-1.png">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="未来边缘" type="application/atom+xml" />
+
+
+
+
+  <link rel="canonical" href="http://stevenocean.github.io/2018/07/08/token-airdrop-with-web3py.html"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>使用 web3.py 实现 ERC20 Token 空投 | 未来边缘</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115901531-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-115901531-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> 
+
+<div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">未来边缘</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+</li>
+
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />Search</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    
+
+    
+    
+      
+      
+    
+      
+      
+    
+      
+      
+    
+      
+      
+    
+      
+      
+    
+    
+
+  
+
+
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://stevenocean.github.io/2018/07/08/token-airdrop-with-web3py.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Steven">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="未来边缘">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">使用 web3.py 实现 ERC20 Token 空投</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-07-08T14:58:00+08:00">2018-07-08</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Smart-Contract-智能合约/" itemprop="url" rel="index"><span itemprop="name">Smart Contract(智能合约)</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/07/08/token-airdrop-with-web3py.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2018/07/08/token-airdrop-with-web3py.html" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a class="header-anchor" href="#前言"></a>前言</h2>
+<p>随着一些交易所搞的上币排名的活动开展，也带来了空投的火爆，当然也给以太坊整个网络带来了很大的考验（极其拥堵、交易费水涨船高），本篇文章还是从技术上来看看实现空投的一种通用方案。</p>
+<p>关于空投的实现需要提前了解一下 ERC20 标准中的下面几个函数：</p>
+<ul>
+<li><strong>approve(_spender, value)</strong>：该函数表示允许 _spender 多次取回调用此函数的的账户中的 token，最高为 value 个 token，后面再次调用此函数会覆盖之前设置的余额；</li>
+<li><strong>allowance(_owner, _spender)</strong>：返回 _spender 仍然可以从 _owner 中提取的 token 余额；</li>
+<li><strong>transferFrom(_from, _to, _value)</strong>: 该方法主要用于允许 contract 来自动执行转账流程，并代表所有者发送 _value 个 token；</li>
+</ul>
+<blockquote>
+<ul>
+<li>ERC20 标准的基础知识，可以看下这篇 <strong><a href="https://medium.com/@jgm.orinoco/understanding-erc-20-token-contracts-a809a7310aa5" target="_blank" rel="noopener">Understanding ERC-20 token contracts</a></strong></li>
+<li>实现和部署自己的符合 ERC20 Token 标准的文章，可以参考 <strong><a href="https://stevenocean.github.io/2018/04/06/web3j-ethereum-token.html">使用 Web3J 发个以太坊 ERC20 Token</a></strong></li>
+</ul>
+</blockquote>
+<h2 id="实现流程"><a class="header-anchor" href="#实现流程"></a>实现流程</h2>
+<img src="/2018/07/08/token-airdrop-with-web3py/token-airdrop-with-web3py-1.png">
+<a id="more"></a>
+<p>流程说明：</p>
+<ol>
+<li>账户 <strong>A</strong> 创建和部署 ERC20 Token <strong>SOT</strong>；</li>
+<li>账户 <strong>B</strong> 创建和部署空投合约 <strong>Airdrop</strong>；</li>
+<li>需要空投的账户 <strong>C</strong>（如运营人员账户）授信合约账户 <strong>Airdrop</strong> 使用其账户上拥有的一定数额的 <strong>SOT</strong> token；</li>
+<li>授信成功后，通过调用 <strong>Airdrop</strong> 的空投方法 <strong>drop</strong> 实现给账户 <strong>a,b,c</strong> 发送 <strong>SOT</strong> token；</li>
+<li>在 <strong>Airdrop</strong> 的方法 <strong>drop</strong> 内部通过调用 <strong>SOT</strong> 的 <strong>transferFrom</strong> 方法实现转账；</li>
+</ol>
+<h2 id="环境准备"><a class="header-anchor" href="#环境准备"></a>环境准备</h2>
+<ul>
+<li><strong>python3</strong></li>
+<li><strong><a href="https://github.com/ethereum/web3.py" target="_blank" rel="noopener">web3.py</a></strong></li>
+<li><strong><a href="https://github.com/ethereum/solidity" target="_blank" rel="noopener">solc</a></strong></li>
+<li>测试网络 Ropsten（Rinkeby 也可以）已同步</li>
+</ul>
+<h2 id="用于部署合约的程序"><a class="header-anchor" href="#用于部署合约的程序"></a>用于部署合约的程序</h2>
+<p>如下为使用 web3.py 部署合约（deploy_contract.py）的代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"><span class="comment"># -*- coding:utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> web3 <span class="keyword">import</span> Web3</span><br><span class="line"><span class="keyword">from</span> web3 <span class="keyword">import</span> HTTPProvider</span><br><span class="line"><span class="keyword">from</span> solc <span class="keyword">import</span> compile_source</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">load_contract_source_code</span><span class="params">(source_code_file)</span>:</span></span><br><span class="line">    contract_source_code = <span class="string">''</span></span><br><span class="line">    <span class="keyword">with</span> open(source_code_file) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> f:</span><br><span class="line">            contract_source_code += line + <span class="string">'\n'</span></span><br><span class="line">    <span class="keyword">return</span> contract_source_code</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">(argv)</span>:</span></span><br><span class="line">    <span class="string">"""deploy_contract &lt;contract name&gt; &lt;contract code path&gt; &lt;account address&gt; &lt;gas price, unit: Gwei&gt;</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    code = load_contract_source_code(argv[<span class="number">2</span>])</span><br><span class="line">    compiled_sol = compile_source(code)</span><br><span class="line">    contract_interface = compiled_sol[<span class="string">'&lt;stdin&gt;:'</span> + argv[<span class="number">1</span>]]</span><br><span class="line">    account_address = argv[<span class="number">3</span>]</span><br><span class="line">    gas_price = int(argv[<span class="number">4</span>]) * <span class="number">10</span> ** <span class="number">9</span></span><br><span class="line"></span><br><span class="line">    w3 = Web3(HTTPProvider(<span class="string">"http://127.0.0.1:8545"</span>))</span><br><span class="line">    contract = w3.eth.contract(abi=contract_interface[<span class="string">'abi'</span>], bytecode=contract_interface[<span class="string">'bin'</span>])</span><br><span class="line">    tx_param = &#123;</span><br><span class="line">        <span class="string">'from'</span>: account_address,</span><br><span class="line">        <span class="string">'gasPrice'</span>: gas_price,</span><br><span class="line">    &#125;</span><br><span class="line">    tx_hash = contract.deploy(transaction=tx_param)</span><br><span class="line">    print(<span class="string">"deploying, tx_hash &#123;&#125;"</span>.format(Web3.toHex(tx_hash)))</span><br><span class="line"></span><br><span class="line">    tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)</span><br><span class="line">    print(<span class="string">"receipt: "</span>, tx_receipt)</span><br></pre></td></tr></table></figure>
+<h2 id="编写合约-airdrop"><a class="header-anchor" href="#编写合约-airdrop"></a>编写合约 <strong>Airdrop</strong></h2>
+<p>这里的合约代码实现逻辑是先将</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">pragma solidity ^0.4.22;</span><br><span class="line"></span><br><span class="line">contract ERC20Token &#123;</span><br><span class="line">    uint256 public totalSupply;</span><br><span class="line">    function balanceOf(address _owner) public constant returns (uint256 balance);</span><br><span class="line">    function transfer(address _to, uint256 _value) public returns (bool success);</span><br><span class="line">    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success);</span><br><span class="line">    function approve(address _spender, uint256 _value) public returns (bool success);</span><br><span class="line">    function allowance(address _owner, address _spender) public constant returns (uint256 remaining);</span><br><span class="line">    event Transfer(address indexed _from, address indexed _to, uint256 _value);</span><br><span class="line">    event Approval(address indexed _owner, address indexed _spender, uint256 _value);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">contract FutureEdgeAirdrop &#123;</span><br><span class="line">    function drop(address tokenAddr, address[] dests, uint256 value) public payable &#123;</span><br><span class="line">        uint256 valuePerCount = value / dests.length；</span><br><span class="line">        for (uint i = 0; i &lt; dests.length; i++) &#123;</span><br><span class="line">            ERC20Token(tokenAddr).transferFrom(msg.sender, dests[i], valuePerCount);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="部署合约-airdrop"><a class="header-anchor" href="#部署合约-airdrop"></a>部署合约 <strong>Airdrop</strong></h2>
+<p>使用之前的 deploy_contract 来部署合约，提供合约名称、合约代码文件、以及部署合约的账号名和 GasPrice，如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> deploy FutureEdgeAirdrop FutureEdgeAirdrop.sol 0xEcD3E082Df97E509D83c71e660b9Fd5EfCB92345 120</span></span><br><span class="line">account: 0xEcD3E082Df97E509D83c71e660b9Fd5EfCB92345</span><br><span class="line">deploying, tx_hash is 0x3852944e009b1acbe556b78516dbfdadd1080429cf723f6f71c78e669b299d42</span><br><span class="line">tx_receipt: &#123;"blockHash": "0x9e2c321dbfaa1236adbd0b5eef2ee14577c951573c6ca665758ab7f1dabe7ea7", "contractAddress": "0xd3D476033145a976fF0304de7CAD767Ba2DBa1F4", "cumulativeGasUsed": 209681, "from": "0xecd3e082df97e509d83c71e660b9fd5efcb92345", "status": 1, "transactionHash": "0x5387e031881b2f3a49b917ed3bdeb76691c9d845d9f3f72ad00a1530b3a4347e", "to": null&#125;</span><br></pre></td></tr></table></figure>
+<p>按照其中的 transaction hash 查询 etherscan 如下：</p>
+<img src="/2018/07/08/token-airdrop-with-web3py/etherscan-airdrop-tx.jpg">
+<p>新创建的 Airdrop 合约地址为: 0xd3D476033145a976fF0304de7CAD767Ba2DBa1F4</p>
+<h2 id="授信合约账号"><a class="header-anchor" href="#授信合约账号"></a>授信合约账号</h2>
+<p>账号 <strong>C</strong>（我们测试环境使用的账号是 0xEfd0367D44bf23159599Fc525e797c9b79B6dEEC）授权给 <strong>Airdrop</strong> 合约账号可以提取其中的 6666 个 <strong>SOT</strong> token（地址为: 0x814f06FFaD575cb9F13A62C835bc505394CB4678），代码实现如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">approve</span><span class="params">(account_addr, token_addr, spender, token_count, gas_price)</span>:</span></span><br><span class="line">    w3 = Web3(HTTPProvider(<span class="string">"http://127.0.0.1:8545"</span>))</span><br><span class="line">    w3.defaultAccount = account_addr</span><br><span class="line">    token = w3.eth.contract(address=token_addr, abi=erc20_abi)</span><br><span class="line">    tx_hash = token.functions.approve(spender, token_count).transact(&#123;</span><br><span class="line">        <span class="string">"from"</span>: account_addr,</span><br><span class="line">        <span class="string">"gasPrice"</span>: gas_price * <span class="number">10</span> ** <span class="number">9</span></span><br><span class="line">    &#125;)</span><br><span class="line">    tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)</span><br><span class="line">    print(<span class="string">"receipt: "</span>, tx_receipt)</span><br></pre></td></tr></table></figure>
+<p>针对上面的需求，相应的参数分别为：</p>
+<ul>
+<li><strong>account_addr</strong>: 这里为 <strong>C</strong>；</li>
+<li><strong>token_addr</strong>： <strong>SOT</strong> 的合约地址，其中用于生成相应的 contract 类实例；</li>
+<li><strong>spender</strong>：这里被授权的是 <strong>Airdrop</strong> 合约地址；</li>
+<li><strong>token_count</strong>：被授权使用的 token 数；</li>
+</ul>
+<p>调用执行后如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> acctexplorer approve 0xEfd0367D44bf23159599Fc525e797c9b79B6dEEC 0x814f06FFaD575cb9F13A62C835bc505394CB4678 0xd3D476033145a976fF0304de7CAD767Ba2DBa1F4 6666000000000000000000 30</span></span><br><span class="line">Commit approve, txhash 0x5800e276f887c7a0f5d73fb9db31f95be7bb609270ba49c29eb5473a51fe61ce, waiting receipt ...</span><br><span class="line">------ approve ------</span><br><span class="line">account: 0xEfd0367D44bf23159599Fc525e797c9b79B6dEEC</span><br><span class="line">token: 0x814f06FFaD575cb9F13A62C835bc505394CB4678(StevenOceanToken) SOT</span><br><span class="line">spender: 0xd3D476033145a976fF0304de7CAD767Ba2DBa1F4</span><br><span class="line">count: 6666000000000000000000</span><br><span class="line">----- receipt -----</span><br><span class="line">&#123;</span><br><span class="line">  "blockHash": "0xe9f6f93965cc7640e92e9fc83a81e446e53ba89219f2b4bdf6c749a212179e8e",</span><br><span class="line">  "contractAddress": null,</span><br><span class="line">  "cumulativeGasUsed": 120369,</span><br><span class="line">  "from": "0xefd0367d44bf23159599fc525e797c9b79b6deec",</span><br><span class="line">  "status": 1,</span><br><span class="line">  "transactionHash": "0xccdc1f637e92d34e39282a0358cdea4810c15f5036ea2cd72f749a3279c6cfc3",</span><br><span class="line">  "to": "0x814f06ffad575cb9f13a62c835bc505394cb4678"</span><br><span class="line">&#125;</span><br><span class="line">--------------------</span><br></pre></td></tr></table></figure>
+<p>通过 allowance 来查看被授权的信息，代码实现如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">allowance</span><span class="params">(account_addr, token_addr, spender)</span>:</span></span><br><span class="line">    w3 = Web3(HTTPProvider(<span class="string">"http://127.0.0.1:8545"</span>))</span><br><span class="line">    token_instance = w3.eth.contract(address=token_addr, abi=erc20_abi, ContractFactoryClass=ConciseContract)</span><br><span class="line">    allow_token_count = token_instance.allowance(account_addr, spender)</span><br><span class="line">    print(<span class="string">"------ allowance ------"</span>)</span><br><span class="line">    print(<span class="string">"token: &#123;&#125;(&#123;&#125;) &#123;&#125;"</span>.format(token_addr, token_instance.name(), token_instance.symbol()))</span><br><span class="line">    print(<span class="string">"owner: &#123;&#125;"</span>.format(account_addr))</span><br><span class="line">    print(<span class="string">"spender: &#123;&#125;"</span>.format(spender))</span><br><span class="line">    print(<span class="string">"allowence count: &#123;&#125;"</span>.format(allow_token_count))</span><br><span class="line">    print(<span class="string">"--------------------"</span>)</span><br></pre></td></tr></table></figure>
+<p>这里传入 <strong>C</strong> 的账户地址(<strong>account_addr</strong>)，<strong>SOT</strong> 的合约地址(<strong>token_addr</strong>)，以及被授信的 <strong>Airdrop</strong> 合约地址(<strong>spender</strong>) 之后，结果如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ acctexplorer allowance <span class="number">0xEfd0367D44bf23159599Fc525e797c9b79B6dEEC</span> <span class="number">0x814f06FFaD575cb9F13A62C835bc505394CB4678</span> <span class="number">0xd3D476033145a976fF0304de7CAD767Ba2DBa1F4</span></span><br><span class="line">------ allowance ------</span><br><span class="line">token: <span class="number">0x814f06FFaD575cb9F13A62C835bc505394CB4678</span>(StevenOceanToken) SOT</span><br><span class="line">owner: <span class="number">0xEfd0367D44bf23159599Fc525e797c9b79B6dEEC</span></span><br><span class="line">spender: <span class="number">0xd3D476033145a976fF0304de7CAD767Ba2DBa1F4</span></span><br><span class="line">allowence count: <span class="number">6666000000000000000000</span></span><br><span class="line">--------------------</span><br></pre></td></tr></table></figure>
+<h2 id="执行空投"><a class="header-anchor" href="#执行空投"></a>执行空投</h2>
+<p>上面账号 <strong>C</strong> 授信成功之后，可以通过 <strong>C</strong> 来执行 <strong>Airdrop</strong> 合约的 <strong>drop</strong> 方法来实现给账号 <strong>a, b, c</strong> 发送 <strong>SOT</strong> token，如下代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">airdrop</span><span class="params">(account_addr, token_addr, token_count, gas_price, dest_account_addrs)</span>:</span></span><br><span class="line">    w3 = Web3(HTTPProvider(<span class="string">"http://127.0.0.1:8545"</span>))</span><br><span class="line">    contract_instance = w3.eth.contract(address=AIRDROP_ADDR, abi=AIRDROP_ABI)</span><br><span class="line">    tx_hash = contract_instance.functions.drop(token_addr, dest_account_addrs, token_count).transact(&#123;</span><br><span class="line">        <span class="string">"from"</span>: account_addr,</span><br><span class="line">        <span class="string">"gasPrice"</span>: gas_price * <span class="number">10</span> ** <span class="number">9</span></span><br><span class="line">    &#125;)</span><br><span class="line">    print(<span class="string">"Commit airdrop, txhash &#123;&#125;, waiting receipt ..."</span>.format(Web3.toHex(tx_hash)))</span><br><span class="line">    tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)</span><br><span class="line">    print(<span class="string">"receipt: "</span>, tx_receipt)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>代码中的 <strong>AIRDROP_ADDR</strong> 为 Airdrop 的合约地址，<strong>AIRDROP_ABI</strong> 为 Airdrop 合约的 ABI（具体生成方法可以参考之前的文章）；</p>
+</blockquote>
+<p>这里通过 contract_instance 中的 functions.drop 来访问相应合约中的 drop 方法，这里演示了同时给两个账号各空投 256 个 SOT token（0x19f87671E1BFd859B203816e54fA19F464c9A155, 0x37a6e30c37fbe6af220a99a029a60e5848745AE9）。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> acctexplorer airdrop 0xEfd0367D44bf23159599Fc525e797c9b79B6dEEC 0x814f06FFaD575cb9F13A62C835bc505394CB4678 789000000000000000000 30 0x19f87671E1BFd859B203816e54fA19F464c9A155 0x37a6e30c37fbe6af220a99a029a60e5848745AE9</span></span><br><span class="line">Commit airdrop, txhash 0x178eb4ad81d3160433b36cfc1357d50f2ef0ce758b4a7026d3cc72f42dd60dee, waiting receipt ...</span><br><span class="line">------ airdrop ------</span><br><span class="line">account: 0xEfd0367D44bf23159599Fc525e797c9b79B6dEEC</span><br><span class="line">token: 0x814f06FFaD575cb9F13A62C835bc505394CB4678(StevenOceanToken) SOT</span><br><span class="line">dest account: 0x37a6e30c37fbe6af220a99a029a60e5848745AE9</span><br><span class="line">count: 512000000000000000000</span><br><span class="line">----- receipt -----</span><br><span class="line">&#123;</span><br><span class="line">  "blockHash": "0x6e452edabcaf7e2e33433e4e243922fcb59dda5e6caa2852de0a2f3547ce4981",</span><br><span class="line">  "contractAddress": null,</span><br><span class="line">  "cumulativeGasUsed": 200618,</span><br><span class="line">  "from": "0xefd0367d44bf23159599fc525e797c9b79b6deec",</span><br><span class="line">  "status": 1,</span><br><span class="line">  "transactionHash": "0x3f371728058e3a1ca32408c6c9613801ba0559ade91b6b63a3a389f985b5b658",</span><br><span class="line">  "to": "0xd3d476033145a976ff0304de7cad767ba2dba1f4"</span><br><span class="line">&#125;</span><br><span class="line">--------------------</span><br></pre></td></tr></table></figure>
+<p>我们可以查一下对应的 transaction 记录，如下：</p>
+<img src="/2018/07/08/token-airdrop-with-web3py/etherscan-airdrop-drop-tx.jpg">
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author: </strong>Steven Hu</li>
+  <li class="post-copyright-link">
+    <strong>Post link:</strong>
+    <a href="http://stevenocean.github.io/2018/07/08/token-airdrop-with-web3py.html" title="使用 web3.py 实现 ERC20 Token 空投">http://stevenocean.github.io/2018/07/08/token-airdrop-with-web3py.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice: </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> unless stating additionally.</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Ethereum/" rel="tag"># Ethereum</a>
+          
+            <a href="/tags/以太坊/" rel="tag"># 以太坊</a>
+          
+            <a href="/tags/区块链/" rel="tag"># 区块链</a>
+          
+            <a href="/tags/blockchain/" rel="tag"># blockchain</a>
+          
+            <a href="/tags/合约账户/" rel="tag"># 合约账户</a>
+          
+            <a href="/tags/Contract/" rel="tag"># Contract</a>
+          
+            <a href="/tags/airdrop/" rel="tag"># airdrop</a>
+          
+            <a href="/tags/ERC20/" rel="tag"># ERC20</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/19/swarm-basic.html" rel="next" title="Swarm 基础">
+                <i class="fa fa-chevron-left"></i> Swarm 基础
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/09/encrypt-and-decrypt-file-with-eth-key.html" rel="prev" title="使用以太坊的公钥和私钥对数据加解密">
+                使用以太坊的公钥和私钥对数据加解密 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.gif"
+                alt="Steven" />
+            
+              <p class="site-author-name" itemprop="name">Steven</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">12</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">12</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">32</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/stevenocean" target="_blank" title="GitHub" rel="external nofollow"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/stevenhu2015" target="_blank" title="Twitter" rel="external nofollow"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://tangmi.me" title="Tangmi`s Blog" target="_blank">Tangmi`s Blog</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现流程"><span class="nav-number">2.</span> <span class="nav-text">实现流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#环境准备"><span class="nav-number">3.</span> <span class="nav-text">环境准备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用于部署合约的程序"><span class="nav-number">4.</span> <span class="nav-text">用于部署合约的程序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编写合约-airdrop"><span class="nav-number">5.</span> <span class="nav-text">编写合约 Airdrop</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#部署合约-airdrop"><span class="nav-number">6.</span> <span class="nav-text">部署合约 Airdrop</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#授信合约账号"><span class="nav-number">7.</span> <span class="nav-text">授信合约账号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#执行空投"><span class="nav-number">8.</span> <span class="nav-text">执行空投</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Steven</span>
+
+  
+
+  
+</div>
+
+
+  
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" rel="external nofollow" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" rel="external nofollow" href="https://github.com/theme-next/hexo-theme-next">NexT.Mist</a></div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.5"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.5"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.5"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.5"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.5"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+      <style>
+        a.gitment-editor-footer-tip { display: none; }
+        .gitment-container.gitment-footer-container { display: none; }
+      </style>
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: '1531033080000',
+            owner: 'stevenocean',
+            repo: 'stevenocean.github.io',
+            
+            lang: "en" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: '246d6cf5b59703cf5ebd4b2541775161201e91aa',
+            
+                client_id: 'ac341f2c8219a55604f0'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css">
+
+  
+  
+  <script src="/lib/algolia-instant-search/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=6.0.5"></script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
