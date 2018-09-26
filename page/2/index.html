@@ -374,6 +374,175 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://stevenocean.github.io/2018/03/17/go-ethereum-source-analysize-1.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Steven">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="未来边缘">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/03/17/go-ethereum-source-analysize-1.html" itemprop="url">go-ethereum 源码分析 - 区块结构(1)</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-03-17T23:58:00+08:00">2018-03-17</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Ethereum-以太坊/" itemprop="url" rel="index"><span itemprop="name">Ethereum(以太坊)</span></a></span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Ethereum-以太坊/blockchain-区块链/" itemprop="url" rel="index"><span itemprop="name">blockchain(区块链)</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>今天抽时间浏览了 Ethereum 的区块结构的相关源码，更加深入地了解区块的数据结构。</p>
+<blockquote>
+<p>分析的主要是 go-ethereum 项目的源码。版本取的是 Frost(v1.8.2)。</p>
+</blockquote>
+<h2 id="1-以太坊的基本结构"><a class="header-anchor" href="#1-以太坊的基本结构"></a>1. 以太坊的基本结构</h2>
+<p>先大致了解了以太坊的基本结构，如下图（来自网络）:</p>
+<img src="/2018/03/17/go-ethereum-source-analysize-1/ethereum-overall-arch-1.jpg">
+<p>其中除了区块链管理（Blockchain Management）和挖矿模块（Miner）之外还包含了：</p>
+<ul>
+<li>基础的分布式数据库结构（Swarm）；</li>
+<li>智能合约（Solidity、Serpent、LLL等），及执行环境 EVM；</li>
+<li>共识机制（PoW-Ethash，PoS）；</li>
+<li>账户管理；</li>
+<li>加密算法模块（SHA-3、RLP等）；</li>
+<li>P2P 网络（Whisper）；</li>
+<li>应用模块（DApp、浏览器钱包-Mist、桌面钱包-EtherWallet、JS框架-Web3js）；</li>
+</ul>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/03/17/go-ethereum-source-analysize-1.html#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://stevenocean.github.io/2018/03/16/swift-reduce-example.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -718,7 +887,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">12</span>
+                    <span class="site-state-item-count">13</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -755,7 +924,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">12</span>
+                      
+                    
+                    <span class="site-state-item-count">13</span>
                     <span class="site-state-item-name">categories</span>
                   </a>
                 </div>
@@ -832,7 +1003,13 @@
                     
                       
                     
-                    <span class="site-state-item-count">32</span>
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">35</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>

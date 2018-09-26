@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://stevenocean.github.io/"/>
-  <updated>2018-09-20T06:35:11.691Z</updated>
+  <updated>2018-09-26T10:14:05.728Z</updated>
   <id>http://stevenocean.github.io/</id>
   
   <author>
@@ -15,6 +15,44 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>学习 btc 钱包私钥、公钥和地址的生成过程</title>
+    <link href="http://stevenocean.github.io/2018/09/26/generate-btc-wallet-key.html"/>
+    <id>http://stevenocean.github.io/2018/09/26/generate-btc-wallet-key.html</id>
+    <published>2018-09-26T08:20:00.000Z</published>
+    <updated>2018-09-26T10:14:05.728Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;一个 Bitcoin 钱包包含了一系列的密钥对，每个密钥对都是由一对公钥(public key)和私钥(private key)组成。私钥(k)通常是随机选出的一串数字串，之后我们就可以通过椭圆曲线密码学(ECC)算法来产生一个公钥(K)，然后再通过单向的 Hash 算法来生成 Bitcoin 地址。&lt;/p&gt;
+&lt;p&gt;如下图所示，描述了生成过程及主要的算法，以及整个过程的每一步都是不可逆的。&lt;/p&gt;
+&lt;img src=&quot;/2018/09/26/generate-btc-wallet-key/generate-process.jpg&quot;&gt;
+&lt;h1&gt;如何生成私钥(private key)&lt;/h1&gt;
+&lt;p&gt;本质上私钥就是一串随机选出的 256 个 bit 的 01 数字（32 字节 * 8 = 256 bits），但是这串数字却控制着你的比特币账号的所有权，因此这串数字相当重要，要具有足够的随机性，一般采用密码学安全的&lt;strong&gt;伪随机数生成器(CSPNG)&lt;/strong&gt;，并且需要有一个来自具有足够熵值的源的种子(seed)。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="Bitcoin" scheme="http://stevenocean.github.io/categories/Bitcoin/"/>
+    
+      <category term="Wallet" scheme="http://stevenocean.github.io/categories/Bitcoin/Wallet/"/>
+    
+      <category term="Crypto" scheme="http://stevenocean.github.io/categories/Bitcoin/Wallet/Crypto/"/>
+    
+    
+      <category term="ECDSA" scheme="http://stevenocean.github.io/tags/ECDSA/"/>
+    
+      <category term="Crypto" scheme="http://stevenocean.github.io/tags/Crypto/"/>
+    
+      <category term="bitcoin" scheme="http://stevenocean.github.io/tags/bitcoin/"/>
+    
+      <category term="比特币" scheme="http://stevenocean.github.io/tags/%E6%AF%94%E7%89%B9%E5%B8%81/"/>
+    
+      <category term="椭圆曲线" scheme="http://stevenocean.github.io/tags/%E6%A4%AD%E5%9C%86%E6%9B%B2%E7%BA%BF/"/>
+    
+      <category term="加密" scheme="http://stevenocean.github.io/tags/%E5%8A%A0%E5%AF%86/"/>
+    
+  </entry>
   
   <entry>
     <title>基于 BIP-32 和 BIP-39 规范生成 HD 钱包（分层确定性钱包）</title>
@@ -40,6 +78,8 @@
       <category term="Wallet" scheme="http://stevenocean.github.io/categories/Bitcoin/Wallet/"/>
     
     
+      <category term="比特币" scheme="http://stevenocean.github.io/tags/%E6%AF%94%E7%89%B9%E5%B8%81/"/>
+    
       <category term="BIP39" scheme="http://stevenocean.github.io/tags/BIP39/"/>
     
       <category term="BIP32" scheme="http://stevenocean.github.io/tags/BIP32/"/>
@@ -51,8 +91,6 @@
       <category term="确定性钱包" scheme="http://stevenocean.github.io/tags/%E7%A1%AE%E5%AE%9A%E6%80%A7%E9%92%B1%E5%8C%85/"/>
     
       <category term="Bitcoin" scheme="http://stevenocean.github.io/tags/Bitcoin/"/>
-    
-      <category term="比特币" scheme="http://stevenocean.github.io/tags/%E6%AF%94%E7%89%B9%E5%B8%81/"/>
     
   </entry>
   
