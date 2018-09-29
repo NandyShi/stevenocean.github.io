@@ -118,8 +118,10 @@
 <meta property="og:image" content="http://stevenocean.github.io/2018/09/23/generate-hd-wallet-by-bip39/generate-seed.jpg">
 <meta property="og:image" content="http://stevenocean.github.io/2018/09/23/generate-hd-wallet-by-bip39/generate-hd-master-key.jpg">
 <meta property="og:image" content="http://stevenocean.github.io/2018/09/23/generate-hd-wallet-by-bip39/hd-key-derivation-bip32.jpg">
+<meta property="og:image" content="http://stevenocean.github.io/2018/09/23/generate-hd-wallet-by-bip39/extend-pubkey.jpg">
+<meta property="og:image" content="http://stevenocean.github.io/2018/09/23/generate-hd-wallet-by-bip39/hardened_derivation.jpg">
 <meta property="og:image" content="http://stevenocean.github.io/2018/09/23/generate-hd-wallet-by-bip39/generate-hd-wallet.jpg">
-<meta property="og:updated_time" content="2018-09-20T06:35:11.691Z">
+<meta property="og:updated_time" content="2018-09-29T09:17:51.385Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="基于 BIP-32 和 BIP-39 规范生成 HD 钱包（分层确定性钱包）">
 <meta name="twitter:description" content="关于 Bitcoin 的钱包 在 Bitcoin 中有两种主要类型的钱包，分别为：  非确定性钱包（Nodeterministic Wallet）：该钱包中的每个密钥都是从不同的随机数独立生成的，密钥彼此之间没有任何关系，这种钱包也被称为 JBOK 钱包（Just a Bunch Of Keys）； 确定性钱包（Deterministic Wallet）：其中所有的密钥都是从一个主密钥派生出来的，">
@@ -596,6 +598,8 @@
 <p>下面就将上面生成的种子作为 HD 钱包的根种子（root seed），任何 HD 钱包的根种子都可以重新创造整个 HD 钱包。</p>
 <img src="/2018/09/23/generate-hd-wallet-by-bip39/generate-hd-master-key.jpg">
 <p>将 root seed 输入到 HMAC-SHA512 算法中可以得到一个 512 位的 Hash，该 Hash 的左边 256 位作为 主私钥 m（Master Private Key），右边 256 位作为 主链码（Master Chain Code）。之后的 主公钥 M（Master Public Key，264 bits）可以通过 主私钥 m 生成。</p>
+<h2 id="子密钥衍生函数-child-key-derivation-ckd"><a class="header-anchor" href="#子密钥衍生函数-child-key-derivation-ckd"></a>子密钥衍生函数(Child Key Derivation, CKD)</h2>
+<p>如上所述，给定 Parent extended key 以及一个索引号(index)，就可以生成相应的 child extended key。</p>
 <p>各个子层级的密钥生成规则如下图：</p>
 <img src="/2018/09/23/generate-hd-wallet-by-bip39/hd-key-derivation-bip32.jpg">
 <p>从上图可以看到，HD 的密钥生成如下几个参数：</p>
@@ -608,7 +612,40 @@
 <p>另外，上面的过程是可以递归下去的，图中的 <strong><em>Child Private Key</em></strong> 可以作为其下一层级的 <strong><em>Parent Private Key</em></strong>。</p>
 </blockquote>
 <p>通过将 (Parent Publick Key, Parent Chain Code, Index Number) 输入至 HMAC-SHA512 算法中，我们就可以生成其子密钥，并且我们可以通过调整 Index Number 来生成同一层级的多个子密钥。</p>
-<p>HD Wallet 的分层密钥生成结构图如下：</p>
+<h2 id="关于扩展密钥-extended-key"><a class="header-anchor" href="#关于扩展密钥-extended-key"></a>关于扩展密钥(extended key)</h2>
+<p>因为这个密钥衍生函数是单向的，所有 子密钥 都是不能够被用来推导出它们的 父密钥 的，也不能推导出同层级的 姊妹密钥 的，只有 父密钥 和 父链码（又是由 Parent 的 Parent 层级的 密钥 和 链码 生成） 可以推导出所有的 子密钥 和 子链码，后续也就可以生成相应的 子公钥 以及地址，并且用于对交易进行签名。</p>
+<p>将 密钥 Key 和 Chain Code 结合起来称为 <strong>扩展密钥（extended key）</strong>，可以通过 <strong>扩展密钥</strong> 来生成自其而下的所有分支。</p>
+<p><strong>扩展密钥</strong> 中提供的密钥可以为 私钥 或者 公钥，和 链码 结合起来分别称为 <strong>扩展私钥（extended private key）</strong> 和 <strong>扩展公钥（extended public key）</strong>，并且分别记为 (k, c) 和 (K, c)，其中公钥 K = point(k)。</p>
+<p>我们可以从 <strong>扩展私钥</strong> 推导出 <strong>扩展公钥</strong>，而反之则不可以，因此对于某些交易场景（如电商），可以为每笔交易生成一个新的公钥和地址来收款，而扩展私钥可以被存储在纸质钱包或者硬件钱包中，用于安全的离线签署交易。可以看到 <strong>扩展公钥</strong> 的安全性相对高一些，下图为通过 扩展 父公钥 来衍生 子私钥进而生成子公钥 的传递机制：</p>
+<img src="/2018/09/23/generate-hd-wallet-by-bip39/extend-pubkey.jpg">
+<blockquote>
+<p><strong>扩展密钥</strong> 也通过 Base58Check 进行编码，<strong>扩展私钥</strong> 和 <strong>扩展公钥</strong> 的编码分别以 <strong>xprv</strong> 和 <strong>xpub</strong> 作为前缀。</p>
+</blockquote>
+<h2 id="硬化衍生子密钥-又是什么鬼？"><a class="header-anchor" href="#硬化衍生子密钥-又是什么鬼？"></a><strong>硬化衍生子密钥</strong> 又是什么鬼？</h2>
+<p>上面的 <strong>扩展密钥</strong>（尤其是 <strong>扩展公钥</strong>） 生成的钱包应该够安全的了，但是设计这一套钱包密钥生成算法的工程师觉得还不够：即使暴露了 <strong>扩展公钥</strong>，也就是暴露了 <strong>子公钥</strong> 和 <strong>Chain Code</strong>，但是如果哪天不小心，你那个 <strong>子私钥</strong> 也不小心泄露了，那么以这个 子密钥和 Chain Code 作为根的那棵树上挂着的所有的密钥也都能够被推导出来了，这TM太危险了（是的，你要是把你的 root seed 泄露了，估计够你哭三天三夜的~没币除外）。</p>
+<p>然后 HD 钱包又提出来一种叫做 <strong>硬化衍生(hardened derivation)</strong> 的衍生函数，从上面 <strong>扩展公钥</strong> 生成的图中可以看到 子密钥 和 子链码 都是由 父公钥 和 父链码 通过 HMAC-SHA512 生成的（也都是相对比较容易“曝光”的），而 <strong>硬化衍生</strong> 函数将 父公钥 换成 父私钥 来推导出 子密钥 和 子链码，如下图：</p>
+<img src="/2018/09/23/generate-hd-wallet-by-bip39/hardened_derivation.jpg">
+<ul>
+<li>图上标识了 索引号码 根据 正常衍生 和 硬化衍生 不同，索引的范围不同，对于正常衍生的索引号范围为 [0x0, 0x7FFFFFFF]，而硬化衍生的索引号范围为 [0x80000000, 0xFFFFFFFF]</li>
+</ul>
+<h2 id="总结"><a class="header-anchor" href="#总结"></a>总结</h2>
+<p>针对 <strong>扩展密钥</strong> 的学习，可以看到有三种生成规则，分别如下：</p>
+<ol>
+<li>Private parent key -&gt; private child key</li>
+</ol>
+<p>即，从 父扩展私钥 和 父链码 计算生成 子扩展私钥 和 子链码。用公式表示就是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CKDpriv((kpar, cpar), i) → (ki, ci)</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>Public parent key -&gt; public child key</li>
+</ol>
+<p>即，从 父扩展公钥 和 父链码 计算生成 子扩展公钥 和 子链码。公式表示如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CKDpub((Kpar, cpar), i) → (Ki, ci)</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>Private parent key -&gt; public child key</li>
+</ol>
+<p>即，从 父扩展私钥 和 父链码 计算生成 子扩展公钥 和 子链码。公式表示如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">N((k, c)) → (K, c)</span><br></pre></td></tr></table></figure>
+<p>下面是根据自己理解整理的 HD Wallet 的分层密钥生成结构图如下：</p>
 <img src="/2018/09/23/generate-hd-wallet-by-bip39/generate-hd-wallet.jpg">
 <h1>参考来源</h1>
 <ul>
@@ -620,6 +657,7 @@
 <li><strong><a href="https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki" target="_blank" rel="noopener">BIP-44 Multi-Account Hierarchy for Deterministic Wallets</a></strong></li>
 <li><strong><a href="https://en.wikipedia.org/wiki/PBKDF2" target="_blank" rel="noopener">PBKDF2 - Password-Based Key Derivation Function 2</a></strong></li>
 <li><strong><a href="https://en.wikipedia.org/wiki/HMAC" target="_blank" rel="noopener">HMAC - hash-based message authentication code</a></strong></li>
+<li><strong><a href="https://tools.ietf.org/html/rfc4231" target="_blank" rel="noopener">Identifiers and Test Vectors for HMAC-SHA-224, HMAC-SHA-256, HMAC-SHA-384, and HMAC-SHA-512</a></strong></li>
 </ul>
 
       
@@ -970,7 +1008,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">1.</span> <span class="nav-text">关于 Bitcoin 的钱包</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">2.</span> <span class="nav-text">关于 BIP-39</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">3.</span> <span class="nav-text">生成助记词</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">4.</span> <span class="nav-text">从助记词生成种子</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">5.</span> <span class="nav-text">从种子开始生成 HD 钱包</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">6.</span> <span class="nav-text">参考来源</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">1.</span> <span class="nav-text">关于 Bitcoin 的钱包</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">2.</span> <span class="nav-text">关于 BIP-39</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">3.</span> <span class="nav-text">生成助记词</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">4.</span> <span class="nav-text">从助记词生成种子</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">5.</span> <span class="nav-text">从种子开始生成 HD 钱包</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#子密钥衍生函数-child-key-derivation-ckd"><span class="nav-number">5.1.</span> <span class="nav-text">子密钥衍生函数(Child Key Derivation, CKD)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于扩展密钥-extended-key"><span class="nav-number">5.2.</span> <span class="nav-text">关于扩展密钥(extended key)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#硬化衍生子密钥-又是什么鬼？"><span class="nav-number">5.3.</span> <span class="nav-text">硬化衍生子密钥 又是什么鬼？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">5.4.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">6.</span> <span class="nav-text">参考来源</span></a></li></ol></div>
             
 
           </div>
